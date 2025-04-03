@@ -6,6 +6,8 @@ import io.ktor.server.auth.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import itmo.edugoolda.api.backup.configureBackupRouting
+import itmo.edugoolda.api.user.configureUserRouting
 import org.koin.core.Koin
 
 fun Application.configureRouting(koin: Koin) {
@@ -13,6 +15,8 @@ fun Application.configureRouting(koin: Koin) {
     routing {
         route("/api") {
             configureAuthRouting(koin)
+            configureUserRouting(koin)
+            configureBackupRouting(koin)
         }
         get("/hello") {
             call.respondText("Hello, Ktor!")
