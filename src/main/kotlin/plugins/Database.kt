@@ -12,15 +12,13 @@ import java.sql.Connection
 
 fun Application.configureDatabase(config: ApplicationConfig) {
     val url = config.property("storage.jdbcURL").getString()
-    val userName = config.property("storage.user").getString()
-    val password = config.property("storage.password").getString()
+    val driver = config.property("storage.driverClassName").getString()
 
     TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
 
     val database = Database.connect(
         url = url,
-        user = userName,
-        password = password
+        driver = driver
     )
 
     transaction(database) {

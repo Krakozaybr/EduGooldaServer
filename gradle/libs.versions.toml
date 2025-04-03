@@ -1,6 +1,6 @@
 [versions]
 exposed-version = "0.58.0"
-postgres = "42.7.5"
+sqlite = "3.44.1.0"
 kotlin-version = "2.1.10"
 ktor-version = "3.0.3"
 logback-version = "1.4.14"
@@ -15,7 +15,7 @@ ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negoti
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed-version" }
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed-version" }
 
-postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
+sqlite = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite" }
 
 ktor-server-swagger = { module = "io.ktor:ktor-server-swagger", version.ref = "ktor-version" }
 ktor-server-resources = { module = "io.ktor:ktor-server-resources", version.ref = "ktor-version" }

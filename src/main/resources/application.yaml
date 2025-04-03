@@ -1,0 +1,18 @@
+ktor:
+    application:
+        modules:
+            - itmo.edugoolda.ApplicationKt.module
+    deployment:
+        port: 8080
+mode: "DEBUG"
+# mode: "PROD"
+storage:
+    driverClassName: "org.sqlite.JDBC"
+    jdbcURL: "jdbc:sqlite:database.db"
+jwt:
+    domain: "https://edugolda.com"
+    audience: "love, death, robots"
+    realm: "itmo.university"
+    secret: "secret"
+    accessTokenExpiration: 300
+    refreshTokenExpiration: 259200

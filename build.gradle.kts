@@ -34,7 +34,7 @@ dependencies {
     // Exposed
     implementation(libs.exposed.core)
     implementation(libs.exposed.jdbc)
-    implementation(libs.postgres)
+    implementation(libs.sqlite)
 
     // Encryption
     implementation(libs.bcrypt)
