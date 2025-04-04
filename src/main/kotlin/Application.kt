@@ -25,7 +25,7 @@ fun Application.module() {
     }.koin
 
     val logger = environment.log
-    val jwtService = configureSecurity(environment.config)
+    val jwtService = configureSecurity(environment.config, koin)
 
     koin.declare(jwtService)
     koin.declare(logger)
