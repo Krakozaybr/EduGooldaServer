@@ -4,7 +4,6 @@ import itmo.edugoolda.api.user.domain.UserId
 import itmo.edugoolda.api.user.domain.UserInfo
 import itmo.edugoolda.api.user.domain.UserRole
 import itmo.edugoolda.api.user.domain.UserRole.Companion.toDTO
-import itmo.edugoolda.utils.reduceByAnd
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll

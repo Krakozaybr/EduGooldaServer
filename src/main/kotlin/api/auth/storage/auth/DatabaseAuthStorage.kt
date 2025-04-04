@@ -1,11 +1,11 @@
-package itmo.edugoolda.api.auth.storage
+package itmo.edugoolda.api.auth.storage.auth
 
+import io.ktor.util.logging.*
 import itmo.edugoolda.api.auth.domain.AuthCredentials
 import itmo.edugoolda.api.user.domain.UserId
 import itmo.edugoolda.utils.checkPassword
 import itmo.edugoolda.utils.hashPassword
 import itmo.edugoolda.utils.reduceByAnd
-import io.ktor.util.logging.*
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
@@ -23,7 +23,7 @@ class DatabaseAuthStorage(
             .where {
                 listOf(
                     AuthTable.providerType eq authCredentials.providerType.toDTO(),
-                    AuthTable.userId eq id.stringValue
+                    AuthTable.userId eq id.value
                 ).reduceByAnd()
             }
             .empty()
@@ -35,12 +35,12 @@ class DatabaseAuthStorage(
             AuthTable.update(
                 where = {
                     listOf(
-                        AuthTable.userId eq id.stringValue,
+                        AuthTable.userId eq id.value,
                         AuthTable.providerUserId eq authCredentials.email
                     ).reduceByAnd()
                 },
                 body = {
-                    it[userId] = id.stringValue
+                    it[userId] = id.value
                     it[providerUserId] = authCredentials.email
                     it[providerType] = authCredentials.providerType.toDTO()
                     it[passwordHash] = hashedPassword
@@ -51,7 +51,7 @@ class DatabaseAuthStorage(
         }
 
         AuthTable.insert {
-            it[userId] = id.stringValue
+            it[userId] = id.value
             it[providerUserId] = authCredentials.email
             it[providerType] = authCredentials.providerType.toDTO()
             it[passwordHash] = hashedPassword
@@ -75,6 +75,15 @@ class DatabaseAuthStorage(
                 password = authCredentials.password,
                 hashed = row[AuthTable.passwordHash],
             )
-        }?.let(UserId::parse)
+        }?.value?.let(UserId::parse)
+    }
+
+    override suspend fun getHashedPassword(userId: UserId): String? = transaction {
+        AuthTable.select(AuthTable.passwordHash)
+            .where {
+                AuthTable.userId eq userId.value
+            }
+            .singleOrNull()
+            ?.get(AuthTable.passwordHash)
     }
 }
