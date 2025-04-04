@@ -1,6 +1,8 @@
 package itmo.edugoolda.api.auth.storage.refresh_tokens
 
 import itmo.edugoolda.api.user.domain.UserId
+import itmo.edugoolda.utils.toCurrentLocalDateTime
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
@@ -26,14 +28,19 @@ class DatabaseRefreshTokensStorage : RefreshTokensStorage {
         }
     }
 
-    override suspend fun getUserIdByRefreshToken(refreshToken: String): UserId? = transaction {
-        RefreshTokensTable.select(RefreshTokensTable.userId)
+    override suspend fun getUserIdByRefreshTokenIfNotExpired(refreshToken: String): UserId? = transaction {
+        val row = RefreshTokensTable.select(RefreshTokensTable.userId, RefreshTokensTable.expiresAt)
             .where {
                 RefreshTokensTable.token eq refreshToken
             }
             .singleOrNull()
-            ?.get(RefreshTokensTable.userId)
-            ?.value
-            ?.let(UserId::parse)
+
+        row?.let {
+            row[RefreshTokensTable.userId].value
+                .let(UserId::parse)
+                .takeIf {
+                    row[RefreshTokensTable.expiresAt] > Clock.System.now().toCurrentLocalDateTime()
+                }
+        }
     }
 }

@@ -20,13 +20,14 @@ class GetTokensUseCase(
     }
 
     suspend fun refreshTokens(refreshToken: String): AuthTokens {
-        val userId = refreshTokensStorage.getUserIdByRefreshToken(refreshToken)
-            ?: throw InvalidCredentialsException()
+        val userId = refreshTokensStorage.getUserIdByRefreshTokenIfNotExpired(refreshToken)
+
+        refreshTokensStorage.removeToken(refreshToken)
+
+        userId ?: throw InvalidCredentialsException()
 
         val passwordHash = authStorage.getHashedPassword(userId)
             ?: throw UserNotFoundException(userId)
-
-        refreshTokensStorage.removeToken(refreshToken)
 
         return generateTokens(userId, passwordHash)
     }

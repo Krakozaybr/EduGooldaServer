@@ -6,5 +6,5 @@ import kotlinx.datetime.LocalDateTime
 interface RefreshTokensStorage {
     suspend fun removeToken(refreshToken: String)
     suspend fun putToken(refreshToken: String, userId: UserId, expiresAt: LocalDateTime)
-    suspend fun getUserIdByRefreshToken(refreshToken: String): UserId?
+    suspend fun getUserIdByRefreshTokenIfNotExpired(refreshToken: String): UserId?
 }
