@@ -2,9 +2,9 @@ package itmo.edugoolda.api.auth.service
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import itmo.edugoolda.api.user.domain.UserId
 import io.ktor.util.logging.*
-import java.util.*
+import itmo.edugoolda.api.user.domain.UserId
+import kotlinx.datetime.*
 import kotlin.time.Duration
 
 class JwtService(
@@ -21,12 +21,22 @@ class JwtService(
         const val REFRESH_TOKEN_TYPE = "REFRESH_TOKEN_TYPE"
 
         const val USER_ID_KEY = "user_id"
+        const val PASSWORD_HASH_KEY = "password_hash"
     }
 
-    fun createAccessToken(userId: UserId) = generateToken(
+    data class TokenInfo(
+        val token: String,
+        val expiresAt: LocalDateTime
+    )
+
+    fun createAccessToken(
+        userId: UserId,
+        passwordHash: String
+    ) = generateToken(
         data = mapOf(
             TOKEN_TYPE_KEY to ACCESS_TOKEN_TYPE,
-            USER_ID_KEY to userId.stringValue
+            USER_ID_KEY to userId.stringValue,
+            PASSWORD_HASH_KEY to passwordHash
         ),
         expirationTime = accessTokenExpiration
     )
@@ -42,11 +52,20 @@ class JwtService(
     private fun generateToken(
         data: Map<String, String>,
         expirationTime: Duration
-    ) = JWT
-        .create()
-        .withAudience(jwtAudience)
-        .withIssuer(jwtDomain)
-        .withExpiresAt(Date(System.currentTimeMillis() + expirationTime.inWholeMilliseconds))
-        .withPayload(data)
-        .sign(algorithm)
+    ): TokenInfo {
+        val timeZone = TimeZone.currentSystemDefault()
+        val expiresAt = Clock.System.now()
+            .plus(expirationTime)
+            .toLocalDateTime(timeZone)
+
+        val token = JWT
+            .create()
+            .withAudience(jwtAudience)
+            .withIssuer(jwtDomain)
+            .withExpiresAt(expiresAt.toInstant(timeZone).toJavaInstant())
+            .withPayload(data)
+            .sign(algorithm)
+
+        return TokenInfo(token, expiresAt)
+    }
 }

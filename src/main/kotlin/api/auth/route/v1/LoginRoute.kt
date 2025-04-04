@@ -1,19 +1,19 @@
 package itmo.edugoolda.api.auth.route.v1
 
-import itmo.edugoolda.api.auth.domain.AuthCredentials
-import itmo.edugoolda.api.auth.dto.AuthResponse
-import itmo.edugoolda.api.auth.dto.LoginRequest
-import itmo.edugoolda.api.auth.service.JwtService
-import itmo.edugoolda.api.auth.storage.AuthStorage
-import itmo.edugoolda.api.error.ErrorResponse
 import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import itmo.edugoolda.api.auth.domain.AuthCredentials
+import itmo.edugoolda.api.auth.domain.GetTokensUseCase
+import itmo.edugoolda.api.auth.dto.AuthResponse
+import itmo.edugoolda.api.auth.dto.LoginRequest
+import itmo.edugoolda.api.auth.exception.InvalidCredentialsException
+import itmo.edugoolda.api.auth.storage.auth.AuthStorage
 import org.koin.core.Koin
 
 fun Route.loginRoute(koin: Koin) {
-    val jwtService = koin.get<JwtService>()
     val authStorage = koin.get<AuthStorage>()
+    val generateTokensUseCase = koin.get<GetTokensUseCase>()
 
     route("login") {
         post<LoginRequest> {
@@ -22,26 +22,15 @@ fun Route.loginRoute(koin: Koin) {
                     email = it.email,
                     password = it.password
                 )
-            )
+            ) ?: throw InvalidCredentialsException()
 
-            if (userId == null) {
-                call.respond(
-                    HttpStatusCode.BadRequest,
-                    ErrorResponse(
-                        errorCode = "INVALID_CREDENTIALS",
-                    )
-                )
-                return@post
-            }
-
-            val refreshToken = jwtService.createRefreshToken(userId)
-            val accessToken = jwtService.createAccessToken(userId)
+            val tokens = generateTokensUseCase.generateNew(userId)
 
             call.respond(
                 HttpStatusCode.OK,
                 AuthResponse(
-                    accessToken = accessToken,
-                    refreshToken = refreshToken,
+                    accessToken = tokens.accessToken,
+                    refreshToken = tokens.refreshToken,
                     userId = userId.stringValue
                 )
             )
