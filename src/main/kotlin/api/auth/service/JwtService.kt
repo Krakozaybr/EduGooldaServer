@@ -3,7 +3,7 @@ package itmo.edugoolda.api.auth.service
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.util.logging.*
-import itmo.edugoolda.api.user.domain.UserId
+import itmo.edugoolda.utils.EntityId
 import kotlinx.datetime.*
 import kotlin.time.Duration
 
@@ -30,7 +30,7 @@ class JwtService(
     )
 
     fun createAccessToken(
-        userId: UserId,
+        userId: EntityId,
         passwordHash: String
     ) = generateToken(
         data = mapOf(
@@ -41,7 +41,7 @@ class JwtService(
         expirationTime = accessTokenExpiration
     )
 
-    fun createRefreshToken(userId: UserId) = generateToken(
+    fun createRefreshToken(userId: EntityId) = generateToken(
         data = mapOf(
             TOKEN_TYPE_KEY to REFRESH_TOKEN_TYPE,
             USER_ID_KEY to userId.stringValue

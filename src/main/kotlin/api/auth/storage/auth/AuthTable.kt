@@ -16,7 +16,7 @@ object AuthTable : UUIDTable(
         onUpdate = ReferenceOption.CASCADE
     )
     val providerType = varchar("provider_type", 30)
-    val providerUserId = varchar("provider_user_id", 255)
+    val providerEntityId = varchar("provider_user_id", 255)
     val passwordHash = varchar("password_hash", 70)
 }
 
