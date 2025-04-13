@@ -15,6 +15,6 @@ object RefreshTokensTable : UUIDTable(
         onDelete = ReferenceOption.CASCADE,
         onUpdate = ReferenceOption.CASCADE
     )
-    val token = varchar("token", 300).index()
+    val token = varchar("token", 300).uniqueIndex()
     val expiresAt = datetime("expires_at")
 }

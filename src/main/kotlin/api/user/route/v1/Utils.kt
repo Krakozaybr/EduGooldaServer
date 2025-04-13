@@ -1,17 +1,17 @@
 package itmo.edugoolda.api.user.route.v1
 
-import itmo.edugoolda.api.error.ErrorResponse
-import itmo.edugoolda.api.user.domain.UserId
-import itmo.edugoolda.api.user.domain.UserInfo
-import itmo.edugoolda.api.user.storage.UserStorage
 import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import itmo.edugoolda.api.error.ErrorResponse
+import itmo.edugoolda.api.user.domain.UserInfo
+import itmo.edugoolda.api.user.storage.UserStorage
+import itmo.edugoolda.utils.EntityId
 
-suspend fun RoutingContext.getUserIdOr404(): UserId? {
+suspend fun RoutingContext.getEntityIdOr404(): EntityId? {
     val id = call.pathParameters[USER_ID_URL_PARAM]?.takeIf {
         it.isNotBlank()
-    }?.let(UserId::parse)
+    }?.let(EntityId::parse)
 
     if (id == null) {
         call.respond(HttpStatusCode.NotFound)
@@ -22,7 +22,7 @@ suspend fun RoutingContext.getUserIdOr404(): UserId? {
 }
 
 suspend fun RoutingContext.getUserOr404(userStorage: UserStorage): UserInfo? {
-    val id = getUserIdOr404() ?: return null
+    val id = getEntityIdOr404() ?: return null
 
     val user = userStorage.getUserById(id)
 

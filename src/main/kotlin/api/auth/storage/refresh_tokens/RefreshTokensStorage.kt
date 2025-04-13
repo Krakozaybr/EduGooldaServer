@@ -1,10 +1,10 @@
 package itmo.edugoolda.api.auth.storage.refresh_tokens
 
-import itmo.edugoolda.api.user.domain.UserId
+import itmo.edugoolda.utils.EntityId
 import kotlinx.datetime.LocalDateTime
 
 interface RefreshTokensStorage {
-    suspend fun removeToken(refreshToken: String)
-    suspend fun putToken(refreshToken: String, userId: UserId, expiresAt: LocalDateTime)
-    suspend fun getUserIdByRefreshTokenIfNotExpired(refreshToken: String): UserId?
+    suspend fun removeToken(refreshToken: String): Int
+    suspend fun putToken(refreshToken: String, userId: EntityId, expiresAt: LocalDateTime)
+    suspend fun getEntityIdByRefreshTokenIfNotExpired(refreshToken: String): EntityId?
 }

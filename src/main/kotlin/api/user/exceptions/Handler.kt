@@ -12,7 +12,17 @@ object UserStatusPagesHandler : StatusPagesHandler {
             call.respond(
                 HttpStatusCode.NotFound,
                 ErrorResponse(
+                    description = "User with id ${cause.userId.stringValue} is not found",
                     errorCode = "USER_NOT_FOUND"
+                )
+            )
+        }
+        exception<UserAlreadyDeletedException> { call, cause ->
+            call.respond(
+                HttpStatusCode.NotFound,
+                ErrorResponse(
+                    description = "User with id ${cause.userId.stringValue} has already been deleted",
+                    errorCode = "ALREADY_DELETED"
                 )
             )
         }

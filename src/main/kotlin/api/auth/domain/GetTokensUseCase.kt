@@ -4,15 +4,15 @@ import itmo.edugoolda.api.auth.exception.InvalidCredentialsException
 import itmo.edugoolda.api.auth.service.JwtService
 import itmo.edugoolda.api.auth.storage.auth.AuthStorage
 import itmo.edugoolda.api.auth.storage.refresh_tokens.RefreshTokensStorage
-import itmo.edugoolda.api.user.domain.UserId
 import itmo.edugoolda.api.user.exceptions.UserNotFoundException
+import itmo.edugoolda.utils.EntityId
 
 class GetTokensUseCase(
     private val jwtService: JwtService,
     private val authStorage: AuthStorage,
     private val refreshTokensStorage: RefreshTokensStorage
 ) {
-    suspend fun generateNew(userId: UserId): AuthTokens {
+    suspend fun generateNew(userId: EntityId): AuthTokens {
         val passwordHash = authStorage.getHashedPassword(userId)
             ?: throw UserNotFoundException(userId)
 
@@ -20,7 +20,7 @@ class GetTokensUseCase(
     }
 
     suspend fun refreshTokens(refreshToken: String): AuthTokens {
-        val userId = refreshTokensStorage.getUserIdByRefreshTokenIfNotExpired(refreshToken)
+        val userId = refreshTokensStorage.getEntityIdByRefreshTokenIfNotExpired(refreshToken)
 
         refreshTokensStorage.removeToken(refreshToken)
 
@@ -33,7 +33,7 @@ class GetTokensUseCase(
     }
 
     private suspend fun generateTokens(
-        userId: UserId,
+        userId: EntityId,
         passwordHash: String
     ): AuthTokens {
         val newRefreshToken = jwtService.createRefreshToken(userId)

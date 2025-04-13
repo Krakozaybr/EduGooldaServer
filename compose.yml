@@ -1,0 +1,36 @@
+services:
+    web:
+        build: .
+        ports:
+            - "8080:8080"
+        depends_on:
+            postgres:
+                condition: service_healthy
+    postgres:
+        image: postgres:17.4
+        volumes:
+            - ./tmp/db:/var/lib/postgresql/data
+        environment:
+            PGPORT: ${PGPORT}
+            POSTGRES_DB: ${PG_DB_NAME}
+            POSTGRES_PASSWORD: ${PG_USER_PASSWORD}
+            POSTGRES_HOST_AUTH_METHOD: trust
+        expose:
+            - "${PGPORT}"
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+            interval: 3s
+    pgadmin:
+        image: dpage/pgadmin4:9.1.0
+        restart: always
+        environment:
+            PGADMIN_DEFAULT_EMAIL: admin@admin.com
+            PGADMIN_DEFAULT_PASSWORD: root
+        ports:
+            - "80:80"
+        volumes:
+            - pgadmin-data:/var/lib/pgadmin
+
+volumes:
+    db-data:
+    pgadmin-data:

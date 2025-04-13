@@ -2,7 +2,7 @@ package itmo.edugoolda.api.auth.storage.auth
 
 import io.ktor.util.logging.*
 import itmo.edugoolda.api.auth.domain.AuthCredentials
-import itmo.edugoolda.api.user.domain.UserId
+import itmo.edugoolda.utils.EntityId
 import itmo.edugoolda.utils.checkPassword
 import itmo.edugoolda.utils.hashPassword
 import itmo.edugoolda.utils.reduceByAnd
@@ -14,7 +14,7 @@ class DatabaseAuthStorage(
     private val logger: Logger
 ) : AuthStorage {
     override suspend fun saveCredentials(
-        id: UserId,
+        id: EntityId,
         authCredentials: AuthCredentials
     ) = transaction {
         if (authCredentials !is AuthCredentials.EmailPassword) throw RuntimeException()
@@ -36,12 +36,12 @@ class DatabaseAuthStorage(
                 where = {
                     listOf(
                         AuthTable.userId eq id.value,
-                        AuthTable.providerUserId eq authCredentials.email
+                        AuthTable.providerEntityId eq authCredentials.email
                     ).reduceByAnd()
                 },
                 body = {
                     it[userId] = id.value
-                    it[providerUserId] = authCredentials.email
+                    it[providerEntityId] = authCredentials.email
                     it[providerType] = authCredentials.providerType.toDTO()
                     it[passwordHash] = hashedPassword
                 }
@@ -52,20 +52,20 @@ class DatabaseAuthStorage(
 
         AuthTable.insert {
             it[userId] = id.value
-            it[providerUserId] = authCredentials.email
+            it[providerEntityId] = authCredentials.email
             it[providerType] = authCredentials.providerType.toDTO()
             it[passwordHash] = hashedPassword
         }
     }
 
-    override suspend fun checkCredentials(authCredentials: AuthCredentials): UserId? = transaction {
+    override suspend fun checkCredentials(authCredentials: AuthCredentials): EntityId? = transaction {
         if (authCredentials !is AuthCredentials.EmailPassword) throw RuntimeException()
 
         val row = AuthTable.select(AuthTable.userId, AuthTable.passwordHash)
             .where {
                 listOf(
                     AuthTable.providerType eq authCredentials.providerType.toDTO(),
-                    AuthTable.providerUserId eq authCredentials.email
+                    AuthTable.providerEntityId eq authCredentials.email
                 ).reduceByAnd()
             }
             .singleOrNull() ?: return@transaction null
@@ -75,10 +75,10 @@ class DatabaseAuthStorage(
                 password = authCredentials.password,
                 hashed = row[AuthTable.passwordHash],
             )
-        }?.value?.let(UserId::parse)
+        }?.value?.let(EntityId::parse)
     }
 
-    override suspend fun getHashedPassword(userId: UserId): String? = transaction {
+    override suspend fun getHashedPassword(userId: EntityId): String? = transaction {
         AuthTable.select(AuthTable.passwordHash)
             .where {
                 AuthTable.userId eq userId.value

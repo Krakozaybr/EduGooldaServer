@@ -1,9 +1,9 @@
 package itmo.edugoolda.api.user.storage
 
-import itmo.edugoolda.api.user.domain.UserId
 import itmo.edugoolda.api.user.domain.UserInfo
 import itmo.edugoolda.api.user.domain.UserRole
 import itmo.edugoolda.api.user.domain.UserRole.Companion.toDTO
+import itmo.edugoolda.utils.EntityId
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
@@ -15,17 +15,17 @@ class DatabaseUserStorage : UserStorage {
         email: String,
         name: String,
         role: UserRole
-    ): UserId = transaction {
+    ): EntityId = transaction {
         val id = UserTable.insert {
             it[UserTable.name] = name
             it[UserTable.email] = email
             it[UserTable.role] = role.toDTO()
         }[UserTable.id].value
 
-        UserId.parse(id)
+        EntityId.parse(id)
     }
 
-    override suspend fun getUserData(userId: UserId): UserInfo? = transaction {
+    override suspend fun getUserData(userId: EntityId): UserInfo? = transaction {
         UserTable.selectAll()
             .where { UserTable.id eq userId.value }
             .singleOrNull()
@@ -39,14 +39,14 @@ class DatabaseUserStorage : UserStorage {
             .toUserInfo()
     }
 
-    override suspend fun getUserById(id: UserId): UserInfo? = transaction {
+    override suspend fun getUserById(id: EntityId): UserInfo? = transaction {
         UserTable.selectAll()
             .where { UserTable.id eq id.value }
             .singleOrNull()
             .toUserInfo()
     }
 
-    override suspend fun markDeleted(id: UserId) {
+    override suspend fun markDeleted(id: EntityId) {
         UserTable.update(
             where = { UserTable.id eq id.value },
             body = {
@@ -66,7 +66,7 @@ private fun ResultRow?.toUserInfo(): UserInfo? {
         email = get(UserTable.email),
         name = get(UserTable.name),
         role = role,
-        id = get(UserTable.id).value.let(UserId::parse),
+        id = get(UserTable.id).value.let(EntityId::parse),
         isDeleted = get(UserTable.isDeleted)
     )
 }
