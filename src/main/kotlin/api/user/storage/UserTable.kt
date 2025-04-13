@@ -6,7 +6,7 @@ object UserTable : UUIDTable(
     name = "users",
     columnName = "id"
 ) {
-    val email = varchar("email", 300).index().nullable()
+    val email = varchar("email", 300).index()
     val name = varchar("name", 300)
     val role = varchar("role", 100).index()
     val isDeleted = bool("is_deleted").default(false)

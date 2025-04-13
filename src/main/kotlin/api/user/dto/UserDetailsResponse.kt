@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 data class UserDetailsResponse(
     @SerialName("id") val id: String,
     @SerialName("name") val name: String,
-    @SerialName("email") val email: String?,
+    @SerialName("email") val email: String,
     @SerialName("role") val role: String,
     @SerialName("is_deleted") val isDeleted: Boolean
 ) {

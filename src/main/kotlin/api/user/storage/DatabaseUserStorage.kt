@@ -25,6 +25,19 @@ class DatabaseUserStorage : UserStorage {
         EntityId.parse(id)
     }
 
+    override suspend fun updateUser(
+        email: String,
+        name: String,
+        role: UserRole
+    ): Unit = transaction {
+        UserTable.update {
+            it[UserTable.name] = name
+            it[UserTable.email] = email
+            it[UserTable.role] = role.toDTO()
+        }
+        Unit
+    }
+
     override suspend fun getUserData(userId: EntityId): UserInfo? = transaction {
         UserTable.selectAll()
             .where { UserTable.id eq userId.value }

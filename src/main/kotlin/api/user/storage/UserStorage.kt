@@ -11,6 +11,12 @@ interface UserStorage {
         role: UserRole
     ): EntityId
 
+    suspend fun updateUser(
+        email: String,
+        name: String,
+        role: UserRole
+    )
+
     suspend fun getUserData(userId: EntityId): UserInfo?
 
     suspend fun getUserByEmail(email: String): UserInfo?

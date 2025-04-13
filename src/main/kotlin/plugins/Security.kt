@@ -103,7 +103,7 @@ val RoutingContext.tokenContext: TokenContext?
             ?: return null
 
         val passwordHash = payload.getClaim(JwtService.PASSWORD_HASH_KEY)?.asString() ?: return null
-        val userId = payload.getClaim(JwtService.PASSWORD_HASH_KEY)?.asString()?.let(EntityId::parse)
+        val userId = payload.getClaim(JwtService.USER_ID_KEY)?.asString()?.let(EntityId::parse)
             ?: return null
 
         return TokenContext(

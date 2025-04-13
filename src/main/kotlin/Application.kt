@@ -3,6 +3,7 @@ package itmo.edugoolda
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
 import itmo.edugoolda.api.auth.authModule
+import itmo.edugoolda.api.error.errorModule
 import itmo.edugoolda.api.user.userModule
 import itmo.edugoolda.plugins.*
 import org.koin.core.context.startKoin
@@ -15,7 +16,8 @@ fun main(args: Array<String>) {
 val mainModule = module {
     includes(
         authModule,
-        userModule
+        userModule,
+        errorModule
     )
 }
 
