@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class DatabaseRefreshTokensStorage : RefreshTokensStorage {
-    override suspend fun removeToken(refreshToken: String): Unit = transaction {
+    override suspend fun removeToken(refreshToken: String) = transaction {
         RefreshTokensTable.deleteWhere {
             token eq refreshToken
         }
