@@ -1,11 +1,11 @@
 package module.auth
 
-import io.ktor.client.request.*
 import io.ktor.http.*
 import itmo.edugoolda.api.auth.dto.LogoutRequest
 import itmo.edugoolda.api.auth.dto.RefreshRequest
 import module.ModuleTest
-import module.register
+import module.registerStudent
+import module.sendRequest
 import module.testJsonRequests
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -13,19 +13,21 @@ import kotlin.test.assertEquals
 class AuthTests : ModuleTest {
     @Test
     fun testLogout() = testJsonRequests { client ->
-        val tokens = client.register()
+        val tokens = client.registerStudent()
 
-        client.post("/api/v1/auth/logout") {
-            contentType(ContentType.Application.Json)
-            setBody(LogoutRequest(tokens.refreshToken))
-        }
+        client.sendRequest(
+            url = "/api/v1/auth/logout",
+            body = LogoutRequest(tokens.refreshToken),
+            method = HttpMethod.Post
+        )
 
         assertEquals(
             HttpStatusCode.Unauthorized,
-            client.post("/api/v1/auth/refresh") {
-                contentType(ContentType.Application.Json)
-                setBody(RefreshRequest(tokens.refreshToken))
-            }.status
+            client.sendRequest(
+                url = "/api/v1/auth/refresh",
+                body = RefreshRequest(tokens.refreshToken),
+                method = HttpMethod.Post
+            ).status
         )
     }
 }

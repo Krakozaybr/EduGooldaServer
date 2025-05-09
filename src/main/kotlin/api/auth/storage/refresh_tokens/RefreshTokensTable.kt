@@ -1,6 +1,6 @@
 package itmo.edugoolda.api.auth.storage.refresh_tokens
 
-import itmo.edugoolda.api.user.storage.UserTable
+import itmo.edugoolda.api.user.storage.tables.UserTable
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime

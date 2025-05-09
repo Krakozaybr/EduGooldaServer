@@ -1,7 +1,7 @@
 package itmo.edugoolda.api.auth.storage.auth
 
 import itmo.edugoolda.api.auth.domain.AuthProviderType
-import itmo.edugoolda.api.user.storage.UserTable
+import itmo.edugoolda.api.user.storage.tables.UserTable
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.ReferenceOption
 

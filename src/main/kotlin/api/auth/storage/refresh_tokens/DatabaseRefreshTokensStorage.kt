@@ -1,6 +1,6 @@
 package itmo.edugoolda.api.auth.storage.refresh_tokens
 
-import itmo.edugoolda.utils.EntityId
+import itmo.edugoolda.utils.EntityIdentifier
 import itmo.edugoolda.utils.toCurrentLocalDateTime
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -18,7 +18,7 @@ class DatabaseRefreshTokensStorage : RefreshTokensStorage {
 
     override suspend fun putToken(
         refreshToken: String,
-        userId: EntityId,
+        userId: EntityIdentifier,
         expiresAt: LocalDateTime
     ): Unit = transaction {
         RefreshTokensTable.insert {
@@ -28,7 +28,7 @@ class DatabaseRefreshTokensStorage : RefreshTokensStorage {
         }
     }
 
-    override suspend fun getEntityIdByRefreshTokenIfNotExpired(refreshToken: String): EntityId? = transaction {
+    override suspend fun getEntityIdByRefreshTokenIfNotExpired(refreshToken: String): EntityIdentifier? = transaction {
         val row = RefreshTokensTable.select(RefreshTokensTable.userId, RefreshTokensTable.expiresAt)
             .where {
                 RefreshTokensTable.token eq refreshToken
@@ -37,7 +37,7 @@ class DatabaseRefreshTokensStorage : RefreshTokensStorage {
 
         row?.let {
             row[RefreshTokensTable.userId].value
-                .let(EntityId::parse)
+                .let(EntityIdentifier::parse)
                 .takeIf {
                     row[RefreshTokensTable.expiresAt] > Clock.System.now().toCurrentLocalDateTime()
                 }

@@ -12,7 +12,7 @@ import io.ktor.server.routing.*
 import itmo.edugoolda.api.auth.service.JwtService
 import itmo.edugoolda.api.auth.storage.auth.AuthStorage
 import itmo.edugoolda.api.error.ErrorResponse
-import itmo.edugoolda.utils.EntityId
+import itmo.edugoolda.utils.EntityIdentifier
 import org.koin.core.Koin
 import kotlin.time.Duration.Companion.seconds
 
@@ -59,7 +59,7 @@ fun Application.configureSecurity(
 
                 val userId = token.getClaim(JwtService.USER_ID_KEY)
                     .asString()
-                    ?.let(EntityId::parse)
+                    ?.let(EntityIdentifier::parse)
                     ?: return@validate null
 
                 val password = token.getClaim(JwtService.PASSWORD_HASH_KEY).asString()
@@ -93,7 +93,7 @@ fun Application.configureSecurity(
 }
 
 data class TokenContext(
-    val userId: EntityId,
+    val userId: EntityIdentifier,
     val passwordHash: String,
 )
 
@@ -103,7 +103,7 @@ val RoutingContext.tokenContext: TokenContext?
             ?: return null
 
         val passwordHash = payload.getClaim(JwtService.PASSWORD_HASH_KEY)?.asString() ?: return null
-        val userId = payload.getClaim(JwtService.USER_ID_KEY)?.asString()?.let(EntityId::parse)
+        val userId = payload.getClaim(JwtService.USER_ID_KEY)?.asString()?.let(EntityIdentifier::parse)
             ?: return null
 
         return TokenContext(

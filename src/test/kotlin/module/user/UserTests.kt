@@ -1,46 +1,41 @@
 package module.user
 
 import io.ktor.client.call.*
-import io.ktor.client.request.*
 import io.ktor.http.*
-import itmo.edugoolda.api.user.dto.UpdateProfileRequest
-import itmo.edugoolda.api.user.dto.UserDetailsResponse
-import module.ModuleTest
-import module.expectOk
-import module.register
-import module.testJsonRequests
+import itmo.edugoolda.api.user.dto.UserInfoDto
+import itmo.edugoolda.api.user.route.v1.UpdateProfileRequest
+import module.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class UserTests : ModuleTest {
     @Test
     fun testUserUpdate() = testJsonRequests { client ->
-        val tokens = client.register()
+        val tokens = client.registerStudent()
 
-        val expectedProfile = UserDetailsResponse(
+        val expectedProfile = UserInfoDto(
             id = tokens.userId,
             name = "newName",
             email = "sndkfjskdf@email.com",
-            role = "teacher",
+            role = "student",
             isDeleted = false
         )
 
-        client.put("/api/v1/user/profile") {
-            contentType(ContentType.Application.Json)
-            bearerAuth(tokens.accessToken)
-            setBody(
-                UpdateProfileRequest(
-                    name = expectedProfile.name,
-                    email = expectedProfile.email,
-                    role = expectedProfile.role,
-                )
-            )
-        }.expectOk()
+        client.sendRequest(
+            url = "/api/v1/user/profile",
+            body = UpdateProfileRequest(
+                name = expectedProfile.name,
+                email = expectedProfile.email
+            ),
+            method = HttpMethod.Put,
+            accessToken = tokens.accessToken
+        ).expectOk()
 
-        val actualProfile = client.get("api/v1/user/${expectedProfile.id}") {
-            contentType(ContentType.Application.Json)
-            bearerAuth(tokens.accessToken)
-        }.body<UserDetailsResponse>()
+        val actualProfile = client.sendRequest(
+            url = "api/v1/user/${expectedProfile.id}",
+            method = HttpMethod.Get,
+            accessToken = tokens.accessToken
+        ).body<UserInfoDto>()
 
         assertEquals(
             expectedProfile,
