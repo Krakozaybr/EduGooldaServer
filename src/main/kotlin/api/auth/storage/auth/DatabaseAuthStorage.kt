@@ -2,10 +2,10 @@ package itmo.edugoolda.api.auth.storage.auth
 
 import io.ktor.util.logging.*
 import itmo.edugoolda.api.auth.domain.AuthCredentials
-import itmo.edugoolda.utils.EntityId
+import itmo.edugoolda.utils.EntityIdentifier
 import itmo.edugoolda.utils.checkPassword
+import itmo.edugoolda.utils.database.reduceByAnd
 import itmo.edugoolda.utils.hashPassword
-import itmo.edugoolda.utils.reduceByAnd
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
@@ -14,7 +14,7 @@ class DatabaseAuthStorage(
     private val logger: Logger
 ) : AuthStorage {
     override suspend fun saveCredentials(
-        id: EntityId,
+        id: EntityIdentifier,
         authCredentials: AuthCredentials
     ) = transaction {
         if (authCredentials !is AuthCredentials.EmailPassword) throw RuntimeException()
@@ -58,7 +58,7 @@ class DatabaseAuthStorage(
         }
     }
 
-    override suspend fun checkCredentials(authCredentials: AuthCredentials): EntityId? = transaction {
+    override suspend fun checkCredentials(authCredentials: AuthCredentials): EntityIdentifier? = transaction {
         if (authCredentials !is AuthCredentials.EmailPassword) throw RuntimeException()
 
         val row = AuthTable.select(AuthTable.userId, AuthTable.passwordHash)
@@ -75,10 +75,10 @@ class DatabaseAuthStorage(
                 password = authCredentials.password,
                 hashed = row[AuthTable.passwordHash],
             )
-        }?.value?.let(EntityId::parse)
+        }?.value?.let(EntityIdentifier::parse)
     }
 
-    override suspend fun getHashedPassword(userId: EntityId): String? = transaction {
+    override suspend fun getHashedPassword(userId: EntityIdentifier): String? = transaction {
         AuthTable.select(AuthTable.passwordHash)
             .where {
                 AuthTable.userId eq userId.value

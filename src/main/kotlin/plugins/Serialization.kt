@@ -7,14 +7,14 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalSerializationApi::class)
+val defaultJson = Json {
+    ignoreUnknownKeys = true
+    allowTrailingComma = true
+    explicitNulls = true
+}
+
 fun Application.configureSerialization() {
     install(ContentNegotiation) {
-        json(
-            Json {
-                ignoreUnknownKeys = true
-                allowTrailingComma = true
-                explicitNulls = true
-            }
-        )
+        json(defaultJson)
     }
 }

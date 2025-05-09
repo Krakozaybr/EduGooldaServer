@@ -14,9 +14,18 @@ fun Application.configureDatabase(
     config: ApplicationConfig,
     koin: Koin
 ) {
-    val url = config.property("storage.jdbcURL").getString()
-    val driver = config.property("storage.driverClassName").getString()
+    initDatabase(
+        url = config.property("storage.jdbcURL").getString(),
+        driver = config.property("storage.driverClassName").getString(),
+        tables = koin.getAll<Table>().toTypedArray()
+    )
+}
 
+fun initDatabase(
+    url: String,
+    driver: String,
+    tables: Array<Table>
+) {
     TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
 
     val database = Database.connect(
@@ -25,6 +34,6 @@ fun Application.configureDatabase(
     )
 
     transaction(database) {
-        SchemaUtils.create(*koin.getAll<Table>().toTypedArray())
+        SchemaUtils.create(*tables)
     }
 }

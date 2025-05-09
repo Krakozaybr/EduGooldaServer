@@ -1,12 +1,12 @@
 package itmo.edugoolda.api.auth.storage.auth
 
 import itmo.edugoolda.api.auth.domain.AuthCredentials
-import itmo.edugoolda.utils.EntityId
+import itmo.edugoolda.utils.EntityIdentifier
 
 interface AuthStorage {
-    suspend fun saveCredentials(id: EntityId, authCredentials: AuthCredentials)
+    suspend fun saveCredentials(id: EntityIdentifier, authCredentials: AuthCredentials)
 
-    suspend fun checkCredentials(authCredentials: AuthCredentials): EntityId?
+    suspend fun checkCredentials(authCredentials: AuthCredentials): EntityIdentifier?
 
-    suspend fun getHashedPassword(userId: EntityId): String?
+    suspend fun getHashedPassword(userId: EntityIdentifier): String?
 }

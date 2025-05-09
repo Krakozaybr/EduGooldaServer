@@ -35,6 +35,7 @@ dependencies {
     // Exposed
     implementation(libs.exposed.core)
     implementation(libs.exposed.jdbc)
+    implementation(libs.exposed.dao)
     implementation(libs.exposed.datetime)
     implementation(libs.sqlite)
 

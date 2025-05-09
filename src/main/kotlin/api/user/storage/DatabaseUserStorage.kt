@@ -1,85 +1,68 @@
 package itmo.edugoolda.api.user.storage
 
-import itmo.edugoolda.api.user.domain.UserInfo
+import itmo.edugoolda.api.user.domain.UserInfoDomain
 import itmo.edugoolda.api.user.domain.UserRole
-import itmo.edugoolda.api.user.domain.UserRole.Companion.toDTO
-import itmo.edugoolda.utils.EntityId
+import itmo.edugoolda.api.user.storage.entities.UserEntity
+import itmo.edugoolda.api.user.storage.entities.toDomain
+import itmo.edugoolda.api.user.storage.tables.UserTable
+import itmo.edugoolda.utils.EntityIdentifier
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 
 class DatabaseUserStorage : UserStorage {
     override suspend fun createUser(
         email: String,
         name: String,
         role: UserRole
-    ): EntityId = transaction {
-        val id = UserTable.insert {
-            it[UserTable.name] = name
-            it[UserTable.email] = email
-            it[UserTable.role] = role.toDTO()
-        }[UserTable.id].value
-
-        EntityId.parse(id)
+    ): EntityIdentifier = transaction {
+        UserEntity.new {
+            this.name = name
+            this.email = email
+            this.role = role
+        }.id.value.let(EntityIdentifier::parse)
     }
 
     override suspend fun updateUser(
+        id: EntityIdentifier,
         email: String,
-        name: String,
-        role: UserRole
+        name: String
     ): Unit = transaction {
-        UserTable.update {
-            it[UserTable.name] = name
-            it[UserTable.email] = email
-            it[UserTable.role] = role.toDTO()
+        UserEntity.findByIdAndUpdate(id.value) {
+            it.name = name
+            it.email = email
         }
-        Unit
     }
 
-    override suspend fun getUserData(userId: EntityId): UserInfo? = transaction {
-        UserTable.selectAll()
-            .where { UserTable.id eq userId.value }
+    override suspend fun getUserByEmail(email: String): UserInfoDomain? = transaction {
+        UserEntity
+            .find { UserTable.email eq email }
             .singleOrNull()
-            .toUserInfo()
+            ?.toDomain()
     }
 
-    override suspend fun getUserByEmail(email: String): UserInfo? = transaction {
-        UserTable.selectAll()
-            .where { UserTable.email eq email }
+    override suspend fun getUserById(id: EntityIdentifier): UserInfoDomain? = transaction {
+        UserEntity
+            .find { UserTable.id eq id.value }
             .singleOrNull()
-            .toUserInfo()
+            ?.toDomain()
     }
 
-    override suspend fun getUserById(id: EntityId): UserInfo? = transaction {
-        UserTable.selectAll()
-            .where { UserTable.id eq id.value }
-            .singleOrNull()
-            .toUserInfo()
-    }
-
-    override suspend fun markDeleted(id: EntityId) {
-        UserTable.update(
-            where = { UserTable.id eq id.value },
-            body = {
-                it[isDeleted] = true
-            }
-        )
+    override suspend fun markDeleted(id: EntityIdentifier) {
+        UserEntity.findByIdAndUpdate(id.value) {
+            it.isDeleted = true
+        }
     }
 }
 
-private fun ResultRow?.toUserInfo(): UserInfo? {
-    this ?: return null
+fun ResultRow.toUserInfo(): UserInfoDomain {
 
-    val role = get(UserTable.role).let(UserRole::fromString)
-        ?: return null
+    val role = get(UserTable.role)
 
-    return UserInfo(
+    return UserInfoDomain(
         email = get(UserTable.email),
         name = get(UserTable.name),
         role = role,
-        id = get(UserTable.id).value.let(EntityId::parse),
+        id = get(UserTable.id).value.let(EntityIdentifier::parse),
         isDeleted = get(UserTable.isDeleted)
     )
 }
