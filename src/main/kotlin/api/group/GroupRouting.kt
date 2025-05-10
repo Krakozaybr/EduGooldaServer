@@ -22,6 +22,7 @@ fun Route.configureGroupRouting(koin: Koin) {
         groupStudentsRoute(koin)
         groupRemoveStudentRoute(koin)
         groupDetailsRoute(koin)
+        groupSetFavourite(koin)
 
         // Subjects
         subjectDetailsRoute(koin)

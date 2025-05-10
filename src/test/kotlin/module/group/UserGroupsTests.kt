@@ -113,6 +113,89 @@ class UserGroupsTests : ModuleTest {
     }
 
     @Test
+    fun test_student_groups_subject_search_favourite_correct() = testJsonRequests { client ->
+        val student = client.registerStudent()
+        val teacher = client.registerTeacher()
+
+        val searchIndex = 4
+
+        val expected = List(10) { index ->
+            val groupId = GroupUtils.createGroupInDatabase(
+                ownerId = teacher.userId,
+                subjectId = SubjectUtils.createSubjectInDatabase(
+                    name = "subject$index",
+                    ownerId = teacher.userId
+                ).toString()
+            )
+
+            GroupUtils.addStudentToGroup(student.userId, groupId.toString())
+
+            groupId
+        }
+
+        GroupUtils.setFavourite(
+            userId = student.userId,
+            groupId = expected[searchIndex].toString(),
+            isFavourite = true
+        )
+
+        val body = client.sendRequest(
+            url = "/api/v1/groups?page=1&page_size=10&is_favourite=true",
+            method = HttpMethod.Get,
+            accessToken = student.accessToken
+        ).expectOk().body<UserGroupsResponse>()
+
+        assertEquals(
+            1,
+            body.total
+        )
+
+        assertEquals(
+            true,
+            body.groups.firstOrNull()?.isFavourite
+        )
+    }
+
+    @Test
+    fun test_student_groups_subject_search_not_favourite_correct() = testJsonRequests { client ->
+        val student = client.registerStudent()
+        val teacher = client.registerTeacher()
+
+        val searchIndex = 4
+
+        val expected = List(10) { index ->
+            val groupId = GroupUtils.createGroupInDatabase(
+                ownerId = teacher.userId,
+                subjectId = SubjectUtils.createSubjectInDatabase(
+                    name = "subject$index",
+                    ownerId = teacher.userId
+                ).toString()
+            )
+
+            GroupUtils.addStudentToGroup(student.userId, groupId.toString())
+
+            groupId
+        }
+
+        GroupUtils.setFavourite(
+            userId = student.userId,
+            groupId = expected[searchIndex].toString(),
+            isFavourite = true
+        )
+
+        val body = client.sendRequest(
+            url = "/api/v1/groups?page=1&page_size=10&is_favourite=false",
+            method = HttpMethod.Get,
+            accessToken = student.accessToken
+        ).expectOk().body<UserGroupsResponse>()
+
+        assertEquals(
+            expected.size - 1,
+            body.total
+        )
+    }
+
+    @Test
     fun test_student_groups_pagination_correct() = testJsonRequests { client ->
         val student = client.registerStudent()
         val teacher = client.registerTeacher()
@@ -367,6 +450,79 @@ class UserGroupsTests : ModuleTest {
         assertEquals(
             searchName,
             body.groups.firstOrNull()?.name
+        )
+    }
+
+    @Test
+    fun test_teacher_groups_subject_search_favourite_correct() = testJsonRequests { client ->
+        val teacher = client.registerTeacher()
+
+        val searchIndex = 4
+
+        val expected = List(10) { index ->
+            GroupUtils.createGroupInDatabase(
+                ownerId = teacher.userId,
+                subjectId = SubjectUtils.createSubjectInDatabase(
+                    name = "subject$index",
+                    ownerId = teacher.userId
+                ).toString()
+            )
+        }
+
+        GroupUtils.setFavourite(
+            userId = teacher.userId,
+            groupId = expected[searchIndex].toString(),
+            isFavourite = true
+        )
+
+        val body = client.sendRequest(
+            url = "/api/v1/groups?page=1&page_size=10&is_favourite=true",
+            method = HttpMethod.Get,
+            accessToken = teacher.accessToken
+        ).expectOk().body<UserGroupsResponse>()
+
+        assertEquals(
+            1,
+            body.total
+        )
+
+        assertEquals(
+            true,
+            body.groups.firstOrNull()?.isFavourite
+        )
+    }
+
+    @Test
+    fun test_teacher_groups_subject_search_not_favourite_correct() = testJsonRequests { client ->
+        val teacher = client.registerTeacher()
+
+        val searchIndex = 4
+
+        val groups = List(10) { index ->
+            GroupUtils.createGroupInDatabase(
+                ownerId = teacher.userId,
+                subjectId = SubjectUtils.createSubjectInDatabase(
+                    name = "subject$index",
+                    ownerId = teacher.userId
+                ).toString()
+            )
+        }
+
+        GroupUtils.setFavourite(
+            userId = teacher.userId,
+            groupId = groups[searchIndex].toString(),
+            isFavourite = true
+        )
+
+        val body = client.sendRequest(
+            url = "/api/v1/groups?page=1&page_size=10&is_favourite=false",
+            method = HttpMethod.Get,
+            accessToken = teacher.accessToken
+        ).expectOk().body<UserGroupsResponse>()
+
+        assertEquals(
+            groups.size - 1,
+            body.total
         )
     }
 }

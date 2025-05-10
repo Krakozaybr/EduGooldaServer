@@ -36,7 +36,8 @@ fun Route.userGroupsRoute(koin: Koin) {
                     maxCount = params.paginationDto.pageSize,
                     userId = userId,
                     query = params.query,
-                    subjectName = params.subjectName
+                    subjectName = params.subjectName,
+                    isFavourite = params.isFavourite
                 )
 
                 UserRole.Student -> groupStorage.getStudentGroups(
@@ -44,7 +45,8 @@ fun Route.userGroupsRoute(koin: Koin) {
                     maxCount = params.paginationDto.pageSize,
                     userId = userId,
                     query = params.query,
-                    subjectName = params.subjectName
+                    subjectName = params.subjectName,
+                    isFavourite = params.isFavourite
                 )
             }
 

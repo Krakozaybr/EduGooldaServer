@@ -17,4 +17,5 @@ data class GroupDetailsDomain(
     val tasksCount: Int,
     val isActive: Boolean,
     val createdAt: LocalDateTime,
+    val isFavourite: Boolean
 )

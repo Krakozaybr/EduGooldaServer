@@ -6,10 +6,7 @@ import itmo.edugoolda.api.group.domain.model.GroupInfoDomain
 import itmo.edugoolda.api.group.exception.GroupNotFoundException
 import itmo.edugoolda.api.group.exception.SubjectNotFoundException
 import itmo.edugoolda.api.group.storage.entities.*
-import itmo.edugoolda.api.group.storage.tables.BannedUsersTable
-import itmo.edugoolda.api.group.storage.tables.GroupTable
-import itmo.edugoolda.api.group.storage.tables.GroupToUserTable
-import itmo.edugoolda.api.group.storage.tables.SubjectTable
+import itmo.edugoolda.api.group.storage.tables.*
 import itmo.edugoolda.api.user.domain.UserInfoDomain
 import itmo.edugoolda.api.user.exceptions.UserNotFoundException
 import itmo.edugoolda.api.user.storage.entities.UserEntity
@@ -17,6 +14,7 @@ import itmo.edugoolda.api.user.storage.entities.toDomain
 import itmo.edugoolda.api.user.storage.tables.UserTable
 import itmo.edugoolda.utils.EntityIdentifier
 import itmo.edugoolda.utils.database.Paged
+import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -69,7 +67,7 @@ class DatabaseGroupStorage : GroupStorage {
         GroupTable.deleteWhere { GroupTable.id eq groupId.value }
     }
 
-    override suspend fun getGroupInfo(groupId: EntityIdentifier): GroupEntityDomain? = transaction {
+    override suspend fun getGroupEntity(groupId: EntityIdentifier): GroupEntityDomain? = transaction {
         GroupEntity.findById(groupId.value)?.toGroupEntityDomain()
     }
 
@@ -110,7 +108,8 @@ class DatabaseGroupStorage : GroupStorage {
         maxCount: Int,
         userId: EntityIdentifier,
         query: String?,
-        subjectName: String?
+        subjectName: String?,
+        isFavourite: Boolean?
     ): Paged<GroupInfoDomain> = transaction {
         Paged.of(
             skip = skip,
@@ -135,7 +134,29 @@ class DatabaseGroupStorage : GroupStorage {
                     onColumn = GroupTable.subjectId,
                     otherColumn = SubjectTable.id
                 )
+                .join(
+                    otherTable = UserFavouriteGroupTable,
+                    joinType = JoinType.LEFT,
+                    onColumn = UserTable.id,
+                    otherColumn = UserFavouriteGroupTable.userId,
+                    additionalConstraint = {
+                        UserFavouriteGroupTable.groupId eq GroupTable.id
+                    }
+                )
                 .selectAll()
+                .run {
+                    isFavourite ?: return@run this
+
+                    where {
+                        when (isFavourite) {
+                            true -> UserFavouriteGroupTable.isFavourite eq true
+                            false -> listOf(
+                                UserFavouriteGroupTable.isFavourite eq false,
+                                UserFavouriteGroupTable.id eq null
+                            ).compoundOr()
+                        }
+                    }
+                }
                 .run {
                     orderBy(
                         *buildList {
@@ -149,7 +170,11 @@ class DatabaseGroupStorage : GroupStorage {
                         }.toTypedArray()
                     )
                 }
-        ).map { GroupEntity.wrapRow(it).toGroupInfoDomain() }
+        ).map {
+            GroupEntity.wrapRow(it).toGroupInfoDomain(
+                it.getOrNull(UserFavouriteGroupTable.isFavourite) ?: false
+            )
+        }
     }
 
     override suspend fun getTeacherGroups(
@@ -157,7 +182,8 @@ class DatabaseGroupStorage : GroupStorage {
         maxCount: Int,
         userId: EntityIdentifier,
         query: String?,
-        subjectName: String?
+        subjectName: String?,
+        isFavourite: Boolean?
     ): Paged<GroupInfoDomain> = transaction {
         Paged.of(
             skip = skip,
@@ -176,7 +202,29 @@ class DatabaseGroupStorage : GroupStorage {
                     onColumn = GroupTable.subjectId,
                     otherColumn = SubjectTable.id
                 )
+                .join(
+                    otherTable = UserFavouriteGroupTable,
+                    joinType = JoinType.LEFT,
+                    onColumn = GroupTable.id,
+                    otherColumn = UserFavouriteGroupTable.groupId,
+                    additionalConstraint = {
+                        UserFavouriteGroupTable.userId eq UserTable.id
+                    }
+                )
                 .selectAll()
+                .run {
+                    isFavourite ?: return@run this
+
+                    where {
+                        when (isFavourite) {
+                            true -> UserFavouriteGroupTable.isFavourite eq true
+                            false -> listOf(
+                                UserFavouriteGroupTable.isFavourite eq false,
+                                UserFavouriteGroupTable.id eq null
+                            ).compoundOr()
+                        }
+                    }
+                }
                 .run {
                     orderBy(
                         *buildList {
@@ -190,15 +238,27 @@ class DatabaseGroupStorage : GroupStorage {
                         }.toTypedArray()
                     )
                 }
-        ).map { GroupEntity.wrapRow(it).toGroupInfoDomain() }
+        ).map {
+            GroupEntity.wrapRow(it).toGroupInfoDomain(
+                it.getOrNull(UserFavouriteGroupTable.isFavourite) ?: false
+            )
+        }
     }
 
     override suspend fun getGroupDetails(
-        groupId: EntityIdentifier
+        groupId: EntityIdentifier,
+        userId: EntityIdentifier
     ): GroupDetailsDomain = transaction {
 
         val group = GroupEntity.findById(groupId.value)
             ?: throw GroupNotFoundException(groupId)
+
+        val isFavourite = UserFavouriteGroupEntity.find {
+            listOf(
+                UserFavouriteGroupTable.groupId eq groupId.value,
+                UserFavouriteGroupTable.userId eq userId.value
+            ).compoundAnd()
+        }.singleOrNull()?.isFavourite ?: false
 
         GroupDetailsDomain(
             id = EntityIdentifier.parse(group.id.value),
@@ -212,7 +272,8 @@ class DatabaseGroupStorage : GroupStorage {
             newSolutionsCount = 0, // TODO: implement when solutions and tasks are ready
             tasksCount = 0, // TODO: implement when solutions and tasks are ready
             isActive = group.isActive,
-            createdAt = group.createdAt
+            createdAt = group.createdAt,
+            isFavourite = isFavourite
         )
     }
 
@@ -251,5 +312,28 @@ class DatabaseGroupStorage : GroupStorage {
         BannedEntity.find {
             (BannedUsersTable.groupId eq groupId.value) and (BannedUsersTable.userId eq userId.value)
         }.singleOrNull() != null
+    }
+
+    override suspend fun setIsFavourite(
+        userId: EntityIdentifier,
+        groupId: EntityIdentifier,
+        isFavourite: Boolean
+    ): Unit = transaction {
+        val entity = UserFavouriteGroupEntity.find {
+            listOf(
+                UserFavouriteGroupTable.groupId eq groupId.value,
+                UserFavouriteGroupTable.userId eq userId.value
+            ).compoundAnd()
+        }.singleOrNull()
+
+        if (entity == null) {
+            UserFavouriteGroupEntity.new {
+                this.groupId = EntityID(groupId.value, GroupTable)
+                this.userId = EntityID(userId.value, UserTable)
+                this.isFavourite = isFavourite
+            }
+        } else {
+            entity.isFavourite = isFavourite
+        }
     }
 }

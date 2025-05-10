@@ -27,4 +27,5 @@ val groupModule = module {
     single { GroupToUserTable } bind Table::class
     single { JoinRequestTable } bind Table::class
     single { SubjectTable } bind Table::class
+    single { UserFavouriteGroupTable } bind Table::class
 }

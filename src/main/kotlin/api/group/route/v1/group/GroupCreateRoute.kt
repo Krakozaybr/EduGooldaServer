@@ -66,7 +66,7 @@ fun Route.groupCreateRoute(koin: Koin) {
                 ownerId = userId
             )
 
-            val details = groupStorage.getGroupDetails(groupId)
+            val details = groupStorage.getGroupDetails(groupId, userId)
 
             call.respond(
                 HttpStatusCode.OK,

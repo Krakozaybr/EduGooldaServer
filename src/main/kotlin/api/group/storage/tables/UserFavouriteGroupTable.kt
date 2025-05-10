@@ -4,7 +4,7 @@ import itmo.edugoolda.api.user.storage.tables.UserTable
 import itmo.edugoolda.utils.database.BaseTable
 import org.jetbrains.exposed.sql.ReferenceOption
 
-object GroupToUserTable : BaseTable("groups_to_users") {
+object UserFavouriteGroupTable : BaseTable("user_favourite_table") {
     val userId = reference(
         name = "user_id",
         refColumn = UserTable.id,
@@ -17,6 +17,7 @@ object GroupToUserTable : BaseTable("groups_to_users") {
         onDelete = ReferenceOption.CASCADE,
         onUpdate = ReferenceOption.CASCADE
     )
+    val isFavourite = bool("is_favourite").default(false)
 
     init {
         uniqueIndex(userId, groupId)

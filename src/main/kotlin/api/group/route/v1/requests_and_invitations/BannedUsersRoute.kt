@@ -27,7 +27,7 @@ fun Route.bannedUsersRoute(koin: Koin) {
 
             val groupId = idParameter(GROUP_ID_URL_PARAM)
 
-            val group = groupStorage.getGroupInfo(groupId)
+            val group = groupStorage.getGroupEntity(groupId)
                 ?: throw GroupNotFoundException(groupId)
 
             if (group.ownerId != userId) {

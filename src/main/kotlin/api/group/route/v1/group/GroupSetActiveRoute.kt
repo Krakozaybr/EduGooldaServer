@@ -28,7 +28,7 @@ fun Route.groupSetActiveRoute(koin: Koin) {
             val userId = tokenContext?.userId
                 ?: throw InvalidCredentialsException()
 
-            val groupInfo = groupStorage.getGroupInfo(groupId)
+            val groupInfo = groupStorage.getGroupEntity(groupId)
                 ?: throw GroupNotFoundException(groupId)
 
             if (userId != groupInfo.ownerId) {
@@ -45,7 +45,7 @@ fun Route.groupSetActiveRoute(koin: Koin) {
                 isActive = it.isActive
             )
 
-            val details = groupStorage.getGroupDetails(groupId)
+            val details = groupStorage.getGroupDetails(groupId, userId)
 
             call.respond(
                 HttpStatusCode.OK,

@@ -48,7 +48,7 @@ fun Route.joinRequestActionRoute(koin: Koin) {
                 JoinRequestAction.Decline,
                 JoinRequestAction.DeclineAndBan -> {
                     val checkIsGroupOwner = suspend {
-                        val group = groupStorage.getGroupInfo(request.groupIdentifier)
+                        val group = groupStorage.getGroupEntity(request.groupIdentifier)
                             ?: throw GroupNotFoundException(request.groupIdentifier)
 
                         group.ownerId == userId

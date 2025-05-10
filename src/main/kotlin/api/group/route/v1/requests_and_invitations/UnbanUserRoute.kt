@@ -30,7 +30,7 @@ fun Route.unbanUserRoute(koin: Koin) {
                 EntityIdentifier.parse(it.userId) ?: throw IdFormatException("user_id")
             )
 
-            val ownerId = groupStorage.getGroupInfo(groupId)?.ownerId
+            val ownerId = groupStorage.getGroupEntity(groupId)?.ownerId
                 ?: throw GroupNotFoundException(groupId)
 
             if (ownerId != userId) throw MustBeGroupOwnerException()
