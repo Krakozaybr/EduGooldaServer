@@ -28,7 +28,7 @@ fun Route.groupStudentsRoute(koin: Koin) {
             val userId = tokenContext?.userId
                 ?: throw InvalidCredentialsException()
 
-            val groupInfo = groupStorage.getGroupInfo(groupId)
+            val groupInfo = groupStorage.getGroupEntity(groupId)
                 ?: throw GroupNotFoundException(groupId)
 
             if (userId != groupInfo.ownerId) throw MustBeGroupOwnerException()

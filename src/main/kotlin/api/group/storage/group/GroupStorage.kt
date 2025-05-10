@@ -25,7 +25,7 @@ interface GroupStorage {
 
     suspend fun deleteGroup(groupId: EntityIdentifier)
 
-    suspend fun getGroupInfo(groupId: EntityIdentifier): GroupEntityDomain?
+    suspend fun getGroupEntity(groupId: EntityIdentifier): GroupEntityDomain?
 
     // Returns whether user was removed
     suspend fun removeUsersFromGroup(id: EntityIdentifier, groupId: EntityIdentifier): Boolean
@@ -51,7 +51,8 @@ interface GroupStorage {
         maxCount: Int,
         userId: EntityIdentifier,
         query: String?,
-        subjectName: String?
+        subjectName: String?,
+        isFavourite: Boolean?
     ): Paged<GroupInfoDomain>
 
     suspend fun getTeacherGroups(
@@ -59,11 +60,13 @@ interface GroupStorage {
         maxCount: Int,
         userId: EntityIdentifier,
         query: String?,
-        subjectName: String?
+        subjectName: String?,
+        isFavourite: Boolean?
     ): Paged<GroupInfoDomain>
 
     suspend fun getGroupDetails(
-        groupId: EntityIdentifier
+        groupId: EntityIdentifier,
+        userId: EntityIdentifier
     ): GroupDetailsDomain
 
     suspend fun checkStudentIsParticipant(
@@ -75,4 +78,10 @@ interface GroupStorage {
         groupId: EntityIdentifier,
         userId: EntityIdentifier
     ): Boolean
+
+    suspend fun setIsFavourite(
+        userId: EntityIdentifier,
+        groupId: EntityIdentifier,
+        isFavourite: Boolean
+    )
 }

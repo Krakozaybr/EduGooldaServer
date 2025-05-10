@@ -7,4 +7,5 @@ data class GroupInfoDomain(
     val name: String,
     val ownerName: String,
     val subjectName: String,
+    val isFavourite: Boolean
 )

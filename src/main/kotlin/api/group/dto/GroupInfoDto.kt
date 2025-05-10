@@ -10,6 +10,7 @@ data class GroupInfoDto(
     @SerialName("name") val name: String,
     @SerialName("subject_name") val ownerName: String,
     @SerialName("owner_name") val subjectName: String,
+    @SerialName("is_favourite") val isFavourite: Boolean,
 ) {
     companion object {
         fun from(groupInfoDomain: GroupInfoDomain) = GroupInfoDto(
@@ -17,6 +18,7 @@ data class GroupInfoDto(
             name = groupInfoDomain.name,
             ownerName = groupInfoDomain.ownerName,
             subjectName = groupInfoDomain.subjectName,
+            isFavourite = groupInfoDomain.isFavourite
         )
     }
 }

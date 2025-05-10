@@ -42,9 +42,10 @@ fun GroupEntity.toGroupEntityDomain() = GroupEntityDomain(
     createdAt = createdAt,
 )
 
-fun GroupEntity.toGroupInfoDomain() = GroupInfoDomain(
+fun GroupEntity.toGroupInfoDomain(isFavourite: Boolean) = GroupInfoDomain(
     id = EntityIdentifier.parse(id.value),
     name = name,
     ownerName = owner.name,
-    subjectName = subject.name
+    subjectName = subject.name,
+    isFavourite = isFavourite
 )

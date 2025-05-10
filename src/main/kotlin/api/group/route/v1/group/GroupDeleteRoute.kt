@@ -24,7 +24,7 @@ fun Route.groupDeleteRoute(koin: Koin) {
             val userId = tokenContext?.userId
                 ?: throw InvalidCredentialsException()
 
-            val ownerId = groupStorage.getGroupInfo(groupId)
+            val ownerId = groupStorage.getGroupEntity(groupId)
                 ?.ownerId
                 ?: throw GroupNotFoundException(groupId)
 

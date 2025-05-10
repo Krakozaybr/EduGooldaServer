@@ -31,7 +31,7 @@ fun Route.groupRemoveStudentRoute(koin: Koin) {
             val studentId = it.studentId.let(EntityIdentifier::parse)
                 ?: throw IdFormatException("student_id")
 
-            val ownerId = groupStorage.getGroupInfo(groupId)
+            val ownerId = groupStorage.getGroupEntity(groupId)
                 ?.ownerId
                 ?: throw GroupNotFoundException(groupId)
 

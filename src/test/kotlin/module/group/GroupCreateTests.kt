@@ -46,7 +46,8 @@ class GroupCreateTests : ModuleTest {
             newSolutionsCount = 0,
             tasksCount = 0,
             isActive = true,
-            createdAt = Clock.System.now().toCurrentLocalDateTime()
+            createdAt = Clock.System.now().toCurrentLocalDateTime(),
+            isFavourite = false
         )
 
         val body = client.sendRequest(

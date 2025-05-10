@@ -18,6 +18,7 @@ data class GroupDetailsDto(
     @SerialName("banned_count") val bannedCount: Int,
     @SerialName("new_solutions_count") val newSolutionsCount: Int,
     @SerialName("tasks_count") val tasksCount: Int,
+    @SerialName("is_favourite") val isFavourite: Boolean,
     @SerialName("is_active") val isActive: Boolean,
     @SerialName("created_at") val createdAt: LocalDateTime,
 ) {
@@ -35,6 +36,7 @@ data class GroupDetailsDto(
             tasksCount = details.tasksCount,
             isActive = details.isActive,
             createdAt = details.createdAt,
+            isFavourite = details.isFavourite
         )
     }
 }

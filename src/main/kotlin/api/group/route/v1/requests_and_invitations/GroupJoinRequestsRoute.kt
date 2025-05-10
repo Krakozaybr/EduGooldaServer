@@ -30,7 +30,7 @@ fun Route.groupJoinRequestsRoute(koin: Koin) {
 
             val groupId = idParameter(GROUP_ID_URL_PARAM)
 
-            val ownerId = groupStorage.getGroupInfo(groupId)
+            val ownerId = groupStorage.getGroupEntity(groupId)
                 ?.ownerId
                 ?: throw GroupNotFoundException(groupId)
 
