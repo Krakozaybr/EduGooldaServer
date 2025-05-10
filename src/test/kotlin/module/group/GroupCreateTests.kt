@@ -151,13 +151,15 @@ class GroupCreateTests : ModuleTest {
     fun test_createGroup_description_error_empty() = testJsonRequests { client ->
         val tokens = client.registerTeacher()
 
+        val subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId)
+
         client.sendRequest(
             url = "/api/v1/group",
             method = HttpMethod.Post,
             accessToken = tokens.accessToken,
             body = GroupCreateRequest(
                 name = "",
-                subjectId = UUID.randomUUID().toString(),
+                subjectId = subjectId.toString(),
                 description = "zdf".repeat(300)
             )
         ).expectError(HttpStatusCode.BadRequest, GroupDescriptionException.CODE)
@@ -167,13 +169,15 @@ class GroupCreateTests : ModuleTest {
     fun test_createGroup_name_error_empty() = testJsonRequests { client ->
         val tokens = client.registerTeacher()
 
+        val subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId)
+
         client.sendRequest(
             url = "/api/v1/group",
             method = HttpMethod.Post,
             accessToken = tokens.accessToken,
             body = GroupCreateRequest(
                 name = "",
-                subjectId = UUID.randomUUID().toString(),
+                subjectId = subjectId.toString(),
                 description = null
             )
         ).expectError(HttpStatusCode.BadRequest, GroupNameException.CODE)
@@ -183,13 +187,15 @@ class GroupCreateTests : ModuleTest {
     fun test_createGroup_name_error_too_long() = testJsonRequests { client ->
         val tokens = client.registerTeacher()
 
+        val subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId)
+
         client.sendRequest(
             url = "/api/v1/group",
             method = HttpMethod.Post,
             accessToken = tokens.accessToken,
             body = GroupCreateRequest(
                 name = "sdf".repeat(300),
-                subjectId = UUID.randomUUID().toString(),
+                subjectId = subjectId.toString(),
                 description = null
             )
         ).expectError(HttpStatusCode.BadRequest, GroupNameException.CODE)

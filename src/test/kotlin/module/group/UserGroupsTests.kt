@@ -78,21 +78,16 @@ class UserGroupsTests : ModuleTest {
         val student = client.registerStudent()
         val teacher = client.registerTeacher()
 
-        var subjectId = ""
         val searchIndex = 4
         val subjectName = "subject$searchIndex"
 
-        List(10) { index ->
+        val expected = List(10) { index ->
             val groupId = GroupUtils.createGroupInDatabase(
                 ownerId = teacher.userId,
                 subjectId = SubjectUtils.createSubjectInDatabase(
                     name = "subject$index",
                     ownerId = teacher.userId
-                ).toString().also {
-                    if (index == searchIndex) {
-                        subjectId = it
-                    }
-                }
+                ).toString()
             )
 
             GroupUtils.addStudentToGroup(student.userId, groupId.toString())
@@ -101,13 +96,13 @@ class UserGroupsTests : ModuleTest {
         }
 
         val body = client.sendRequest(
-            url = "/api/v1/groups?page=1&page_size=10&subject_id=$subjectId",
+            url = "/api/v1/groups?page=1&page_size=10&subject_query=$subjectName",
             method = HttpMethod.Get,
             accessToken = student.accessToken
         ).expectOk().body<UserGroupsResponse>()
 
         assertEquals(
-            1,
+            expected.size,
             body.total
         )
 
@@ -266,34 +261,29 @@ class UserGroupsTests : ModuleTest {
     fun test_teacher_groups_subject_search_correct() = testJsonRequests { client ->
         val teacher = client.registerTeacher()
 
-        var subjectId = ""
         val searchIndex = 4
         val subjectName = "subject$searchIndex"
 
-        List(10) { index ->
+        val expected = List(10) { index ->
             val groupId = GroupUtils.createGroupInDatabase(
                 ownerId = teacher.userId,
                 subjectId = SubjectUtils.createSubjectInDatabase(
                     name = "subject$index",
                     ownerId = teacher.userId
-                ).toString().also {
-                    if (index == searchIndex) {
-                        subjectId = it
-                    }
-                }
+                ).toString()
             )
 
             groupId
         }
 
         val body = client.sendRequest(
-            url = "/api/v1/groups?page=1&page_size=10&subject_id=$subjectId",
+            url = "/api/v1/groups?page=1&page_size=10&subject_query=$subjectName",
             method = HttpMethod.Get,
             accessToken = teacher.accessToken
         ).expectOk().body<UserGroupsResponse>()
 
         assertEquals(
-            1,
+            expected.size,
             body.total
         )
 
