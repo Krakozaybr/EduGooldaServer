@@ -14,7 +14,8 @@ interface UserStorage {
     suspend fun updateUser(
         id: EntityIdentifier,
         email: String,
-        name: String
+        name: String,
+        bio: String?
     )
 
     suspend fun getUserByEmail(email: String): UserInfoDomain?

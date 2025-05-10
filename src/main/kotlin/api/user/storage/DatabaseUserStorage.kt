@@ -6,7 +6,6 @@ import itmo.edugoolda.api.user.storage.entities.UserEntity
 import itmo.edugoolda.api.user.storage.entities.toDomain
 import itmo.edugoolda.api.user.storage.tables.UserTable
 import itmo.edugoolda.utils.EntityIdentifier
-import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class DatabaseUserStorage : UserStorage {
@@ -25,11 +24,13 @@ class DatabaseUserStorage : UserStorage {
     override suspend fun updateUser(
         id: EntityIdentifier,
         email: String,
-        name: String
+        name: String,
+        bio: String?
     ): Unit = transaction {
         UserEntity.findByIdAndUpdate(id.value) {
             it.name = name
             it.email = email
+            it.bio = bio
         }
     }
 
@@ -52,17 +53,4 @@ class DatabaseUserStorage : UserStorage {
             it.isDeleted = true
         }
     }
-}
-
-fun ResultRow.toUserInfo(): UserInfoDomain {
-
-    val role = get(UserTable.role)
-
-    return UserInfoDomain(
-        email = get(UserTable.email),
-        name = get(UserTable.name),
-        role = role,
-        id = get(UserTable.id).value.let(EntityIdentifier::parse),
-        isDeleted = get(UserTable.isDeleted)
-    )
 }

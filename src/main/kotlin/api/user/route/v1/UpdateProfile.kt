@@ -4,14 +4,18 @@ import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import itmo.edugoolda.api.auth.exception.InvalidBioException
 import itmo.edugoolda.api.auth.exception.InvalidCredentialsException
 import itmo.edugoolda.api.auth.exception.InvalidEmailException
 import itmo.edugoolda.api.user.dto.UserInfoDto
 import itmo.edugoolda.api.user.exceptions.EmailIsNotFreeException
+import itmo.edugoolda.api.user.exceptions.InvalidUserNameException
 import itmo.edugoolda.api.user.exceptions.UserNotFoundException
 import itmo.edugoolda.api.user.storage.UserStorage
 import itmo.edugoolda.plugins.tokenContext
+import itmo.edugoolda.utils.validateBio
 import itmo.edugoolda.utils.validateEmail
+import itmo.edugoolda.utils.validateName
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.koin.core.Koin
@@ -29,6 +33,10 @@ fun Route.updateRoute(koin: Koin) {
 
             if (!validateEmail(it.email)) throw InvalidEmailException()
 
+            if (!validateBio(it.bio)) throw InvalidBioException()
+
+            if (!validateName(it.name)) throw InvalidUserNameException()
+
             if (userStorage.getUserByEmail(it.email)?.id !in listOf(null, actualUser.id)) {
                 throw EmailIsNotFreeException(it.email)
             }
@@ -36,7 +44,8 @@ fun Route.updateRoute(koin: Koin) {
             userStorage.updateUser(
                 id = userId,
                 email = it.email,
-                name = it.name
+                name = it.name,
+                bio = it.bio
             )
 
             val user = userStorage.getUserById(userId)
@@ -53,5 +62,6 @@ fun Route.updateRoute(koin: Koin) {
 @Serializable
 data class UpdateProfileRequest(
     @SerialName("name") val name: String,
-    @SerialName("email") val email: String
+    @SerialName("email") val email: String,
+    @SerialName("bio") val bio: String?,
 )

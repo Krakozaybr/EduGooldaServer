@@ -13,8 +13,10 @@ import itmo.edugoolda.api.auth.exception.UnknownUserRoleException
 import itmo.edugoolda.api.auth.exception.UserAlreadyExistsException
 import itmo.edugoolda.api.auth.storage.auth.AuthStorage
 import itmo.edugoolda.api.user.domain.UserRole
+import itmo.edugoolda.api.user.exceptions.InvalidUserNameException
 import itmo.edugoolda.api.user.storage.UserStorage
 import itmo.edugoolda.utils.validateEmail
+import itmo.edugoolda.utils.validateName
 import itmo.edugoolda.utils.validatePassword
 import org.koin.core.Koin
 
@@ -31,6 +33,8 @@ fun Route.registerRoute(koin: Koin) {
         if (userStorage.getUserByEmail(it.email) != null) throw UserAlreadyExistsException()
 
         if (!validatePassword(it.password)) throw PasswordInvalidException()
+
+        if (!validateName(it.name)) throw InvalidUserNameException()
 
         val userId = userStorage.createUser(
             email = it.email,
