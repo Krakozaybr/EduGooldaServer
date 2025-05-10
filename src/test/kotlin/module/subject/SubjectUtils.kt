@@ -1,15 +1,21 @@
 package module.subject
 
 import itmo.edugoolda.api.group.storage.tables.SubjectTable
+import module.faker
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.*
 
 object SubjectUtils {
     val DefaultSubjectName = "Test subject"
 
-    fun createSubjectInDatabase(name: String = DefaultSubjectName) = transaction {
+    fun createSubjectInDatabase(
+        ownerId: String,
+        name: String = faker.funnyName.name()
+    ) = transaction {
         SubjectTable.insertAndGetId {
             it[SubjectTable.name] = name
+            it[SubjectTable.ownerId] = UUID.fromString(ownerId)
         }.value
     }
 }

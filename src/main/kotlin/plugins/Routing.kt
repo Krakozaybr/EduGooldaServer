@@ -19,7 +19,7 @@ fun Application.configureRouting(koin: Koin) {
             configureGroupRouting(koin)
         }
         get("/hello") {
-            call.respondText("Hello, Ktor!")
+            call.respondText("Hello, Ktor! It is 7 version")
         }
         authenticate {
             get("/hello_auth") {

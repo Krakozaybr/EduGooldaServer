@@ -9,7 +9,10 @@ import itmo.edugoolda.api.error.exceptions.IdFormatException
 import itmo.edugoolda.api.group.dto.GroupDetailsDto
 import itmo.edugoolda.api.group.exception.GroupDescriptionException
 import itmo.edugoolda.api.group.exception.GroupNameException
+import itmo.edugoolda.api.group.exception.MustBeSubjectOwnerException
+import itmo.edugoolda.api.group.exception.SubjectNotFoundException
 import itmo.edugoolda.api.group.storage.group.GroupStorage
+import itmo.edugoolda.api.group.storage.subject.SubjectStorage
 import itmo.edugoolda.api.group.utils.checkGroupDescription
 import itmo.edugoolda.api.group.utils.checkGroupName
 import itmo.edugoolda.api.user.domain.UserRole
@@ -25,6 +28,7 @@ import org.koin.core.Koin
 fun Route.groupCreateRoute(koin: Koin) {
     val groupStorage = koin.get<GroupStorage>()
     val userStorage = koin.get<UserStorage>()
+    val subjectStorage = koin.get<SubjectStorage>()
 
     authenticate {
         post<GroupCreateRequest>("/group") {
@@ -43,6 +47,14 @@ fun Route.groupCreateRoute(koin: Koin) {
 
             if (it.description != null && !checkGroupDescription(it.description)) {
                 throw GroupDescriptionException()
+            }
+
+            if (!subjectStorage.checkExists(subjectId)) {
+                throw SubjectNotFoundException(subjectId)
+            }
+
+            if (!subjectStorage.checkIsUserOwner(subjectId = subjectId, userId = userId)) {
+                throw MustBeSubjectOwnerException()
             }
 
             if (!checkGroupName(it.name)) throw GroupNameException()

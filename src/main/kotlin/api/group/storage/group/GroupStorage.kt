@@ -51,7 +51,7 @@ interface GroupStorage {
         maxCount: Int,
         userId: EntityIdentifier,
         query: String?,
-        subjectId: EntityIdentifier?
+        subjectName: String?
     ): Paged<GroupInfoDomain>
 
     suspend fun getTeacherGroups(
@@ -59,7 +59,7 @@ interface GroupStorage {
         maxCount: Int,
         userId: EntityIdentifier,
         query: String?,
-        subjectId: EntityIdentifier?
+        subjectName: String?
     ): Paged<GroupInfoDomain>
 
     suspend fun getGroupDetails(

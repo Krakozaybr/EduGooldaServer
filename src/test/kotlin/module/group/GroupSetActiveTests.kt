@@ -18,7 +18,7 @@ class GroupSetActiveTests : ModuleTest {
 
         val id = GroupUtils.createGroupInDatabase(
             ownerId = tokens.userId,
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId).toString()
         )
 
         var body = client.sendRequest(
@@ -57,7 +57,7 @@ class GroupSetActiveTests : ModuleTest {
 
         val id = GroupUtils.createGroupInDatabase(
             ownerId = tokens.userId,
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId).toString()
         )
 
         client.sendRequest(

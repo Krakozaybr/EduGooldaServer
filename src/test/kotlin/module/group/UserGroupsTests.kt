@@ -17,7 +17,7 @@ class UserGroupsTests : ModuleTest {
         val groups = List(10) {
             val groupId = GroupUtils.createGroupInDatabase(
                 ownerId = teacher.userId,
-                subjectId = SubjectUtils.createSubjectInDatabase().toString()
+                subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
             )
 
             GroupUtils.addStudentToGroup(student.userId, groupId.toString())
@@ -50,7 +50,7 @@ class UserGroupsTests : ModuleTest {
         val groups = List(10) {
             val groupId = GroupUtils.createGroupInDatabase(
                 ownerId = teacher.userId,
-                subjectId = SubjectUtils.createSubjectInDatabase().toString()
+                subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
             )
 
             groupId
@@ -86,7 +86,8 @@ class UserGroupsTests : ModuleTest {
             val groupId = GroupUtils.createGroupInDatabase(
                 ownerId = teacher.userId,
                 subjectId = SubjectUtils.createSubjectInDatabase(
-                    name = "subject$index"
+                    name = "subject$index",
+                    ownerId = teacher.userId
                 ).toString().also {
                     if (index == searchIndex) {
                         subjectId = it
@@ -124,7 +125,7 @@ class UserGroupsTests : ModuleTest {
         val groups = List(10) {
             val groupId = GroupUtils.createGroupInDatabase(
                 ownerId = teacher.userId,
-                subjectId = SubjectUtils.createSubjectInDatabase().toString()
+                subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
             )
 
             GroupUtils.addStudentToGroup(student.userId, groupId.toString())
@@ -175,7 +176,7 @@ class UserGroupsTests : ModuleTest {
                     }
                 },
                 ownerId = teacher.userId,
-                subjectId = SubjectUtils.createSubjectInDatabase().toString()
+                subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
             )
 
             GroupUtils.addStudentToGroup(student.userId, groupId.toString())
@@ -207,7 +208,7 @@ class UserGroupsTests : ModuleTest {
         val groups = List(10) {
             GroupUtils.createGroupInDatabase(
                 ownerId = teacher.userId,
-                subjectId = SubjectUtils.createSubjectInDatabase().toString()
+                subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
             )
         }
 
@@ -240,7 +241,7 @@ class UserGroupsTests : ModuleTest {
         val groups = List(10) {
             GroupUtils.createGroupInDatabase(
                 ownerId = teacher2.userId,
-                subjectId = SubjectUtils.createSubjectInDatabase().toString()
+                subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
             )
         }
 
@@ -273,7 +274,8 @@ class UserGroupsTests : ModuleTest {
             val groupId = GroupUtils.createGroupInDatabase(
                 ownerId = teacher.userId,
                 subjectId = SubjectUtils.createSubjectInDatabase(
-                    name = "subject$index"
+                    name = "subject$index",
+                    ownerId = teacher.userId
                 ).toString().also {
                     if (index == searchIndex) {
                         subjectId = it
@@ -308,7 +310,7 @@ class UserGroupsTests : ModuleTest {
         val groups = List(10) {
             val groupId = GroupUtils.createGroupInDatabase(
                 ownerId = teacher.userId,
-                subjectId = SubjectUtils.createSubjectInDatabase().toString()
+                subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
             )
 
             groupId
@@ -356,7 +358,7 @@ class UserGroupsTests : ModuleTest {
                     }
                 },
                 ownerId = teacher.userId,
-                subjectId = SubjectUtils.createSubjectInDatabase().toString()
+                subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
             )
             groupId
         }

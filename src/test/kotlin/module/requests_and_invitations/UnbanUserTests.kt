@@ -20,7 +20,7 @@ class UnbanUserTests : ModuleTest {
 
         val groupId = GroupUtils.createGroupInDatabase(
             ownerId = teacher.userId,
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
         )
 
         JoiningUtils.banStudent(groupId = groupId.toString(), studentId = student.userId)
@@ -45,7 +45,7 @@ class UnbanUserTests : ModuleTest {
 
         val groupId = GroupUtils.createGroupInDatabase(
             ownerId = teacher.userId,
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
         )
 
         client.sendRequest(
@@ -66,7 +66,7 @@ class UnbanUserTests : ModuleTest {
 
         val groupId = GroupUtils.createGroupInDatabase(
             ownerId = teacher.userId,
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
         )
 
         JoiningUtils.banStudent(groupId.toString(), student.userId)

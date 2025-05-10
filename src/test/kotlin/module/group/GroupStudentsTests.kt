@@ -24,7 +24,7 @@ class GroupStudentsTests : ModuleTest {
 
         val groupId = GroupUtils.createGroupInDatabase(
             ownerId = tokens.userId,
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId).toString()
         )
 
         studentIds.forEach {
@@ -62,7 +62,7 @@ class GroupStudentsTests : ModuleTest {
 
         val groupId = GroupUtils.createGroupInDatabase(
             ownerId = tokens.userId,
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId).toString()
         )
 
         studentIds.forEach {

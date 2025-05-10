@@ -7,6 +7,7 @@ import itmo.edugoolda.api.group.dto.GroupDetailsDto
 import itmo.edugoolda.api.group.dto.SubjectDto
 import itmo.edugoolda.api.group.exception.GroupDescriptionException
 import itmo.edugoolda.api.group.exception.GroupNameException
+import itmo.edugoolda.api.group.exception.MustBeSubjectOwnerException
 import itmo.edugoolda.api.group.exception.SubjectNotFoundException
 import itmo.edugoolda.api.group.route.v1.group.GroupCreateRequest
 import itmo.edugoolda.api.user.exceptions.UnsuitableUserRoleException
@@ -24,7 +25,7 @@ class GroupCreateTests : ModuleTest {
     fun test_createGroup_correct() = testJsonRequests { client ->
         val tokens = client.registerTeacher()
 
-        val subjectId = SubjectUtils.createSubjectInDatabase()
+        val subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId)
 
         val expectedResponse = GroupDetailsDto(
             id = "",
@@ -72,7 +73,7 @@ class GroupCreateTests : ModuleTest {
     fun test_createGroup_not_teacher() = testJsonRequests { client ->
         val tokens = client.registerStudent()
 
-        val subjectId = SubjectUtils.createSubjectInDatabase()
+        val subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId)
 
         val body = client.sendRequest(
             url = "/api/v1/group",
@@ -105,6 +106,29 @@ class GroupCreateTests : ModuleTest {
                 description = null
             )
         ).expectError(HttpStatusCode.NotFound, SubjectNotFoundException.CODE)
+    }
+
+    @Test
+    fun test_createGroup_not_subject_owner() = testJsonRequests { client ->
+        val tokens = client.registerTeacher()
+        val teacher2 = client.registerTeacher(
+            DefaultRegisterTeacherRequest.copy(
+                email = "another@email.com"
+            )
+        )
+
+        val subjectId = SubjectUtils.createSubjectInDatabase(teacher2.userId)
+
+        client.sendRequest(
+            url = "/api/v1/group",
+            method = HttpMethod.Post,
+            accessToken = tokens.accessToken,
+            body = GroupCreateRequest(
+                name = "Test group",
+                subjectId = subjectId.toString(),
+                description = null
+            )
+        ).expectError(HttpStatusCode.Forbidden, MustBeSubjectOwnerException.CODE)
     }
 
     @Test

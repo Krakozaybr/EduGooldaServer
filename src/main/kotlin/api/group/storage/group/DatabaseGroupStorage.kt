@@ -110,7 +110,7 @@ class DatabaseGroupStorage : GroupStorage {
         maxCount: Int,
         userId: EntityIdentifier,
         query: String?,
-        subjectId: EntityIdentifier?
+        subjectName: String?
     ): Paged<GroupInfoDomain> = transaction {
         Paged.of(
             skip = skip,
@@ -137,12 +137,17 @@ class DatabaseGroupStorage : GroupStorage {
                 )
                 .selectAll()
                 .run {
-                    subjectId ?: return@run this
-                    where { SubjectTable.id eq subjectId.value }
-                }
-                .run {
-                    query ?: return@run this
-                    orderBy(GroupTable.name like query to SortOrder.DESC)
+                    orderBy(
+                        *buildList {
+                            if (query != null) {
+                                add(GroupTable.name like query to SortOrder.DESC)
+                            }
+
+                            if (subjectName != null) {
+                                add(SubjectTable.name like subjectName to SortOrder.DESC)
+                            }
+                        }.toTypedArray()
+                    )
                 }
         ).map { GroupEntity.wrapRow(it).toGroupInfoDomain() }
     }
@@ -152,7 +157,7 @@ class DatabaseGroupStorage : GroupStorage {
         maxCount: Int,
         userId: EntityIdentifier,
         query: String?,
-        subjectId: EntityIdentifier?
+        subjectName: String?
     ): Paged<GroupInfoDomain> = transaction {
         Paged.of(
             skip = skip,
@@ -173,12 +178,17 @@ class DatabaseGroupStorage : GroupStorage {
                 )
                 .selectAll()
                 .run {
-                    subjectId ?: return@run this
-                    where { SubjectTable.id eq subjectId.value }
-                }
-                .run {
-                    query ?: return@run this
-                    orderBy(GroupTable.name like query to SortOrder.DESC)
+                    orderBy(
+                        *buildList {
+                            if (query != null) {
+                                add(GroupTable.name like query to SortOrder.DESC)
+                            }
+
+                            if (subjectName != null) {
+                                add(SubjectTable.name like subjectName to SortOrder.DESC)
+                            }
+                        }.toTypedArray()
+                    )
                 }
         ).map { GroupEntity.wrapRow(it).toGroupInfoDomain() }
     }

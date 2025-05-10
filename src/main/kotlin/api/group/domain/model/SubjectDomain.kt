@@ -4,5 +4,6 @@ import itmo.edugoolda.utils.EntityIdentifier
 
 data class SubjectDomain(
     val id: EntityIdentifier,
-    val name: String
+    val name: String,
+    val ownerId: EntityIdentifier
 )

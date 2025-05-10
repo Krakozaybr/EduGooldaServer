@@ -16,7 +16,7 @@ class GroupDeleteTests : ModuleTest {
 
         val id = GroupUtils.createGroupInDatabase(
             ownerId = tokens.userId,
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId).toString()
         )
 
         client.sendRequest(
@@ -32,7 +32,7 @@ class GroupDeleteTests : ModuleTest {
 
         val id = GroupUtils.createGroupInDatabase(
             ownerId = UUID.randomUUID().toString(),
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId).toString()
         )
 
         client.sendRequest(
