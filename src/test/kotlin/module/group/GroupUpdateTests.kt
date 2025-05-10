@@ -21,13 +21,13 @@ class GroupUpdateTests : ModuleTest {
 
         val group = GroupUtils.createGroupInDatabase(
             ownerId = tokens.userId,
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId).toString()
         )
 
         val request = GroupUpdateRequest(
             name = "newName",
             description = "newDescription",
-            subjectId = SubjectUtils.createSubjectInDatabase().toString(),
+            subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId).toString(),
             isActive = false
         )
 
@@ -61,13 +61,13 @@ class GroupUpdateTests : ModuleTest {
 
         val group = GroupUtils.createGroupInDatabase(
             ownerId = teacher.userId,
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId).toString()
         )
 
         val request = GroupUpdateRequest(
             name = "newName",
             description = "newDescription",
-            subjectId = SubjectUtils.createSubjectInDatabase().toString(),
+            subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId).toString(),
             isActive = false
         )
 
@@ -86,7 +86,7 @@ class GroupUpdateTests : ModuleTest {
         val request = GroupUpdateRequest(
             name = "newName",
             description = "newDescription",
-            subjectId = SubjectUtils.createSubjectInDatabase().toString(),
+            subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId).toString(),
             isActive = false
         )
 
@@ -104,7 +104,7 @@ class GroupUpdateTests : ModuleTest {
 
         val group = GroupUtils.createGroupInDatabase(
             ownerId = tokens.userId,
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId).toString()
         )
 
         val request = GroupUpdateRequest(

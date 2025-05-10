@@ -19,7 +19,7 @@ class TeacherJoinRequestsTests : ModuleTest {
         val requests = List(10) {
             val groupId = GroupUtils.createGroupInDatabase(
                 ownerId = teacher.userId,
-                subjectId = SubjectUtils.createSubjectInDatabase().toString()
+                subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
             )
 
             JoiningUtils.addJoinRequestStudent(
@@ -56,7 +56,7 @@ class TeacherJoinRequestsTests : ModuleTest {
         val requests = List(10) {
             val groupId = GroupUtils.createGroupInDatabase(
                 ownerId = teacher.userId,
-                subjectId = SubjectUtils.createSubjectInDatabase().toString()
+                subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
             )
 
             JoiningUtils.addJoinRequestStudent(
@@ -115,7 +115,7 @@ class TeacherJoinRequestsTests : ModuleTest {
         val requests = List(10) {
             val groupId = GroupUtils.createGroupInDatabase(
                 ownerId = teacher.userId,
-                subjectId = SubjectUtils.createSubjectInDatabase().toString()
+                subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
             )
 
             JoiningUtils.addJoinRequestStudent(

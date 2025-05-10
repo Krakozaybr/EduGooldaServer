@@ -20,7 +20,7 @@ class BannedUsersTests : ModuleTest {
 
         val groupId = GroupUtils.createGroupInDatabase(
             ownerId = teacher.userId,
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
         )
 
         val bannedUsers = List(10) {
@@ -61,7 +61,7 @@ class BannedUsersTests : ModuleTest {
 
         val groupId = GroupUtils.createGroupInDatabase(
             ownerId = teacher.userId,
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
         )
 
         val bannedUsers = List(10) {
@@ -135,7 +135,7 @@ class BannedUsersTests : ModuleTest {
 
         val groupId = GroupUtils.createGroupInDatabase(
             ownerId = teacher.userId,
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
         )
 
         List(10) {

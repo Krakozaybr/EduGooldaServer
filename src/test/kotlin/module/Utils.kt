@@ -1,5 +1,6 @@
 package module
 
+import io.github.serpro69.kfaker.Faker
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -12,9 +13,11 @@ import io.ktor.server.testing.*
 import itmo.edugoolda.api.auth.dto.AuthResponse
 import itmo.edugoolda.api.auth.dto.RegisterRequest
 import itmo.edugoolda.api.error.ErrorResponse
+import itmo.edugoolda.api.user.domain.UserRole
 import java.nio.file.Files
 import kotlin.io.path.Path
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 val DefaultRegisterStudentRequest = RegisterRequest(
     email = "student@email.com",
@@ -48,6 +51,63 @@ suspend fun HttpClient.registerTeacher(
     }.expectOk().body<AuthResponse>()
 }
 
+data class UserData(
+    val email: String,
+    val password: String,
+    val name: String,
+    val accessToken: String,
+    val refreshToken: String,
+    val userId: String
+)
+
+val faker = Faker()
+
+suspend fun HttpClient.registerUniqueTeacher(): UserData {
+    val request = RegisterRequest(
+        email = faker.internet.safeEmail(),
+        password = "SomePassword123",
+        name = faker.funnyName.name(),
+        role = UserRole.Teacher.data
+    )
+
+    val auth = post("/api/v1/auth/register") {
+        contentType(ContentType.Application.Json)
+        setBody(request)
+    }.expectOk().body<AuthResponse>()
+
+    return UserData(
+        email = request.email,
+        password = request.password,
+        name = request.name,
+        accessToken = auth.accessToken,
+        refreshToken = auth.refreshToken,
+        userId = auth.userId,
+    )
+}
+
+suspend fun HttpClient.registerUniqueStudent(): UserData {
+    val request = RegisterRequest(
+        email = faker.internet.safeEmail(),
+        password = "SomePassword123",
+        name = faker.funnyName.name(),
+        role = UserRole.Student.data
+    )
+
+    val auth = post("/api/v1/auth/register") {
+        contentType(ContentType.Application.Json)
+        setBody(request)
+    }.expectOk().body<AuthResponse>()
+
+    return UserData(
+        email = request.email,
+        password = request.password,
+        name = request.name,
+        accessToken = auth.accessToken,
+        refreshToken = auth.refreshToken,
+        userId = auth.userId,
+    )
+}
+
 fun testJsonRequests(
     block: suspend ApplicationTestBuilder.(client: HttpClient) -> Unit
 ) = testApplication {
@@ -67,7 +127,14 @@ fun removeDatabase() {
 }
 
 suspend fun HttpResponse.expectError(code: HttpStatusCode, errorCode: String): ErrorResponse {
+
+    assertTrue(
+        actual = status.value in 400..499,
+        message = "Error status code expected, but was $status"
+    )
+
     val body = body<ErrorResponse>()
+
     assertEquals(
         code,
         this.status,

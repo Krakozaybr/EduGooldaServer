@@ -14,7 +14,7 @@ class GroupDetailsTests : ModuleTest {
 
         val id = GroupUtils.createGroupInDatabase(
             ownerId = tokens.userId,
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId).toString()
         )
 
         client.sendRequest(

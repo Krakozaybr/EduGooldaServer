@@ -5,9 +5,7 @@ import io.ktor.http.*
 import itmo.edugoolda.api.error.ErrorResponse
 import itmo.edugoolda.api.group.dto.SubjectDto
 import itmo.edugoolda.api.group.exception.SubjectNotFoundException
-import itmo.edugoolda.api.group.route.v1.subject.SubjectsListResponse
 import itmo.edugoolda.api.group.storage.entities.SubjectEntity
-import itmo.edugoolda.api.group.storage.entities.toDomain
 import module.ModuleTest
 import module.registerStudent
 import module.sendRequest
@@ -17,7 +15,7 @@ import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class SubjectTests : ModuleTest {
+class SubjectDetailsTests : ModuleTest {
     @Test
     fun testUnknownSubject() = testJsonRequests { client ->
         val tokens = client.registerStudent()
@@ -71,36 +69,6 @@ class SubjectTests : ModuleTest {
 
         assertEquals(
             expectedSubject,
-            body
-        )
-    }
-
-    @Test
-    fun testSubjectList() = testJsonRequests { client ->
-        val tokens = client.registerStudent()
-
-        val expectedSubjects = transaction {
-            List(10) {
-                SubjectEntity.new {
-                    name = "Test subject $it"
-                }.toDomain().let(SubjectDto::from)
-            }
-        }
-
-        val resp = client.sendRequest(
-            url = "/api/v1/subjects",
-            method = HttpMethod.Get,
-            accessToken = tokens.accessToken
-        )
-        val body = resp.body<SubjectsListResponse>()
-
-        assertEquals(
-            HttpStatusCode.OK,
-            resp.status
-        )
-
-        assertEquals(
-            SubjectsListResponse(expectedSubjects),
             body
         )
     }

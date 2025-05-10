@@ -17,7 +17,7 @@ class JoiningInformationTests : ModuleTest {
 
         val groupId = GroupUtils.createGroupInDatabase(
             ownerId = teacher.userId,
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
         )
 
         client.sendRequest(
@@ -34,7 +34,7 @@ class JoiningInformationTests : ModuleTest {
 
         val groupId = GroupUtils.createGroupInDatabase(
             ownerId = teacher.userId,
-            subjectId = SubjectUtils.createSubjectInDatabase().toString()
+            subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
         )
 
         client.sendRequest(

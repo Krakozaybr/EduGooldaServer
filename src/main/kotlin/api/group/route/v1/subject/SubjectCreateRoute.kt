@@ -6,6 +6,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import itmo.edugoolda.api.auth.exception.InvalidCredentialsException
 import itmo.edugoolda.api.group.dto.SubjectDto
+import itmo.edugoolda.api.group.exception.SubjectAlreadyExistsException
 import itmo.edugoolda.api.group.storage.subject.SubjectStorage
 import itmo.edugoolda.api.user.domain.UserRole
 import itmo.edugoolda.api.user.exceptions.UnsuitableUserRoleException
@@ -16,12 +17,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.koin.core.Koin
 
-fun Route.subjectsListRoute(koin: Koin) {
+fun Route.createSubjectRoute(koin: Koin) {
     val subjectStorage = koin.get<SubjectStorage>()
     val userStorage = koin.get<UserStorage>()
 
     authenticate {
-        get("/subjects") {
+        post<SubjectCreateRequest>("/subject") {
 
             val userId = tokenContext?.userId
                 ?: throw InvalidCredentialsException()
@@ -33,17 +34,21 @@ fun Route.subjectsListRoute(koin: Koin) {
                 throw UnsuitableUserRoleException(UserRole.Teacher)
             }
 
-            val list = subjectStorage.getSubjects(userId)
+            if (subjectStorage.checkExists(it.name, userId)) {
+                throw SubjectAlreadyExistsException(it.name)
+            }
+
+            val subject = subjectStorage.createSubject(it.name, userId)
 
             call.respond(
                 HttpStatusCode.OK,
-                SubjectsListResponse(list.map { SubjectDto.from(it) })
+                SubjectDto.from(subject)
             )
         }
     }
 }
 
 @Serializable
-data class SubjectsListResponse(
-    @SerialName("subjects") val subjects: List<SubjectDto>
+data class SubjectCreateRequest(
+    @SerialName("name") val name: String
 )

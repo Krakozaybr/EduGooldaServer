@@ -6,6 +6,7 @@ ktor-version = "3.0.3"
 logback-version = "1.5.13"
 bcrypt-version = "0.4"
 koin = "4.0.3"
+kotlin-faker = "1.15.0"
 
 [libraries]
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor-version" }
@@ -37,6 +38,8 @@ kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version
 bcrypt = { module = "org.mindrot:jbcrypt", version.ref = "bcrypt-version" }
 
 koin = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+
+kotlin-faker = { module = "io.github.serpro69:kotlin-faker", version.ref = "kotlin-faker" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-version" }

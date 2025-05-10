@@ -48,6 +48,10 @@ fun Route.groupUpdateRoute(koin: Koin) {
                 throw SubjectNotFoundException(subjectId)
             }
 
+            if (!subjectStorage.checkIsUserOwner(subjectId = subjectId, userId = userId)) {
+                throw MustBeSubjectOwnerException()
+            }
+
             if (it.description != null && !checkGroupDescription(it.description)) {
                 throw GroupDescriptionException()
             }
