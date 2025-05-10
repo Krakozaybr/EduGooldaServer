@@ -1,7 +1,6 @@
 package module.subject
 
 import itmo.edugoolda.api.group.storage.tables.SubjectTable
-import module.faker
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
@@ -11,7 +10,7 @@ object SubjectUtils {
 
     fun createSubjectInDatabase(
         ownerId: String,
-        name: String = faker.funnyName.name()
+        name: String = DefaultSubjectName
     ) = transaction {
         SubjectTable.insertAndGetId {
             it[SubjectTable.name] = name

@@ -5,12 +5,10 @@ import io.ktor.http.*
 import itmo.edugoolda.api.error.ErrorResponse
 import itmo.edugoolda.api.group.dto.SubjectDto
 import itmo.edugoolda.api.group.exception.SubjectNotFoundException
-import itmo.edugoolda.api.group.storage.entities.SubjectEntity
 import module.ModuleTest
 import module.registerStudent
 import module.sendRequest
 import module.testJsonRequests
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -44,11 +42,7 @@ class SubjectDetailsTests : ModuleTest {
 
         val expectedName = "Test subject"
 
-        val subjectId = transaction {
-            SubjectEntity.new {
-                name = expectedName
-            }.id.value
-        }
+        val subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId)
 
         val expectedSubject = SubjectDto(
             name = expectedName,
