@@ -7,11 +7,16 @@ import itmo.edugoolda.api.error.ErrorResponse
 import itmo.edugoolda.api.error.exceptions.BaseException
 
 class PasswordInvalidException : BaseException() {
+    companion object {
+        const val CODE = "PASSWORD_INVALID"
+    }
+
     override suspend fun handle(call: ApplicationCall) {
         call.respond(
             HttpStatusCode.BadRequest,
             ErrorResponse(
-                errorCode = "PASSWORD_INVALID",
+                description = "Password must have length from 6 to 32, have at least one digit, one uppercase and lowercase letters",
+                errorCode = CODE,
             )
         )
     }

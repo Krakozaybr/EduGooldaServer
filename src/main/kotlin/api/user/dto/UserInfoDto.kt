@@ -11,7 +11,8 @@ data class UserInfoDto(
     @SerialName("name") val name: String,
     @SerialName("email") val email: String,
     @SerialName("role") val role: String,
-    @SerialName("is_deleted") val isDeleted: Boolean
+    @SerialName("is_deleted") val isDeleted: Boolean,
+    @SerialName("bio") val bio: String?
 ) {
     companion object {
         fun from(info: UserInfoDomain) = UserInfoDto(
@@ -20,6 +21,7 @@ data class UserInfoDto(
             email = info.email,
             role = info.role.toDTO(),
             isDeleted = info.isDeleted,
+            bio = info.bio
         )
     }
 }

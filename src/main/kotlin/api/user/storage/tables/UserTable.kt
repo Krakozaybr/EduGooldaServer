@@ -10,5 +10,6 @@ object UserTable : BaseTable(
     val email = varchar("email", 300).index()
     val name = varchar("name", 300)
     val role = enumeration<UserRole>("role")
+    val bio = text("bio").nullable().default(null)
     val isDeleted = bool("is_deleted").default(false)
 }

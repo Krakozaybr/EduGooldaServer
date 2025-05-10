@@ -17,6 +17,7 @@ class UserEntity(id: EntityID<UUID>) : BaseEntity(id, UserTable) {
     var name by UserTable.name
     var role by UserTable.role
     var isDeleted by UserTable.isDeleted
+    var bio by UserTable.bio
 
     val groups by GroupEntity via GroupToUserTable
 }
@@ -27,4 +28,5 @@ fun UserEntity.toDomain() = UserInfoDomain(
     name = name,
     role = role,
     isDeleted = isDeleted,
+    bio = bio
 )

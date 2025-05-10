@@ -7,5 +7,6 @@ data class UserInfoDomain(
     val email: String,
     val name: String,
     val role: UserRole,
-    val isDeleted: Boolean
+    val isDeleted: Boolean,
+    val bio: String?
 )
