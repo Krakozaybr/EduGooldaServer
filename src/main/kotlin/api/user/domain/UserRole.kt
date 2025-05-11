@@ -5,9 +5,9 @@ enum class UserRole(val data: String) {
     Student("student");
 
     companion object {
-        fun fromString(data: String) = entries.firstOrNull { it.data == data }
+        fun fromString(data: String) = entries.firstOrNull { it.data == data.lowercase() }
 
-        fun safeFromString(data: String) = entries.first { it.data == data }
+        fun safeFromString(data: String) = entries.first { it.data == data.lowercase() }
 
         fun UserRole.toDTO() = data
     }

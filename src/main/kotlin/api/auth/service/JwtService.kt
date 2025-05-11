@@ -16,9 +16,10 @@ class JwtService(
     private val algorithm: Algorithm
 ) {
     companion object {
-        const val TOKEN_TYPE_KEY = "token_type"
+        const val TOKEN_TYPE_KEY = "TOKEN_TYPE"
         const val ACCESS_TOKEN_TYPE = "ACCESS_TOKEN_TYPE"
         const val REFRESH_TOKEN_TYPE = "REFRESH_TOKEN_TYPE"
+        const val CREATED_AT = "CREATED_AT"
 
         const val USER_ID_KEY = "user_id"
         const val PASSWORD_HASH_KEY = "password_hash"
@@ -36,7 +37,8 @@ class JwtService(
         data = mapOf(
             TOKEN_TYPE_KEY to ACCESS_TOKEN_TYPE,
             USER_ID_KEY to userId.stringValue,
-            PASSWORD_HASH_KEY to passwordHash
+            PASSWORD_HASH_KEY to passwordHash,
+            CREATED_AT to Clock.System.now().toEpochMilliseconds().toString()
         ),
         expirationTime = accessTokenExpiration
     )
@@ -44,7 +46,8 @@ class JwtService(
     fun createRefreshToken(userId: EntityIdentifier) = generateToken(
         data = mapOf(
             TOKEN_TYPE_KEY to REFRESH_TOKEN_TYPE,
-            USER_ID_KEY to userId.stringValue
+            USER_ID_KEY to userId.stringValue,
+            CREATED_AT to Clock.System.now().toEpochMilliseconds().toString()
         ),
         expirationTime = refreshTokenExpiration
     )

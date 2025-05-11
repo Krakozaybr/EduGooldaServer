@@ -36,6 +36,10 @@ fun Route.registerRoute(koin: Koin) {
 
         if (!validateName(it.name)) throw InvalidUserNameException()
 
+        if (userStorage.getUserByEmail(it.email) != null) {
+            throw UserAlreadyExistsException()
+        }
+
         val userId = userStorage.createUser(
             email = it.email,
             name = it.name,

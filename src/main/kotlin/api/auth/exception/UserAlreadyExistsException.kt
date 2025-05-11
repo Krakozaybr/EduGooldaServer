@@ -7,11 +7,15 @@ import itmo.edugoolda.api.error.ErrorResponse
 import itmo.edugoolda.api.error.exceptions.BaseException
 
 class UserAlreadyExistsException : BaseException() {
+    companion object {
+        const val CODE = "USER_EXIST"
+    }
+
     override suspend fun handle(call: ApplicationCall) {
         call.respond(
             HttpStatusCode.BadRequest,
             ErrorResponse(
-                errorCode = "USER_EXIST",
+                errorCode = CODE,
             )
         )
     }

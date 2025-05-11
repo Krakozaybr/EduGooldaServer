@@ -7,11 +7,15 @@ import itmo.edugoolda.api.error.ErrorResponse
 import itmo.edugoolda.api.error.exceptions.BaseException
 
 class InvalidCredentialsException : BaseException() {
+    companion object {
+        const val CODE = "INVALID_CREDENTIALS"
+    }
+
     override suspend fun handle(call: ApplicationCall) {
         call.respond(
             HttpStatusCode.Unauthorized,
             ErrorResponse(
-                errorCode = "INVALID_CREDENTIALS",
+                errorCode = CODE,
             )
         )
     }
