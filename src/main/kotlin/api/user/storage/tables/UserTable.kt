@@ -7,7 +7,7 @@ object UserTable : BaseTable(
     name = "users",
     columnName = "id"
 ) {
-    val email = varchar("email", 300).index()
+    val email = varchar("email", 300).uniqueIndex()
     val name = varchar("name", 300)
     val role = enumeration<UserRole>("role")
     val bio = text("bio").nullable().default(null)
