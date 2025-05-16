@@ -54,6 +54,6 @@ fun Route.groupStudentsRoute(koin: Koin) {
 
 @Serializable
 data class GroupStudentsResponse(
-    @SerialName("students") val students: List<UserInfoDto>,
+    @SerialName("users") val students: List<UserInfoDto>,
     @SerialName("total") val total: Int,
 )
