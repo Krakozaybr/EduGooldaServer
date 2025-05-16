@@ -8,8 +8,8 @@ import kotlinx.serialization.Serializable
 data class GroupInfoDto(
     @SerialName("id") val id: String,
     @SerialName("name") val name: String,
-    @SerialName("subject_name") val ownerName: String,
-    @SerialName("owner_name") val subjectName: String,
+    @SerialName("owner_name") val ownerName: String,
+    @SerialName("subject_name") val subjectName: String,
     @SerialName("is_favourite") val isFavourite: Boolean,
 ) {
     companion object {
