@@ -7,6 +7,7 @@ import io.ktor.server.routing.*
 import itmo.edugoolda.api.auth.configureAuthRouting
 import itmo.edugoolda.api.backup.configureBackupRouting
 import itmo.edugoolda.api.group.configureGroupRouting
+import itmo.edugoolda.api.lessons.configureLessonsRouting
 import itmo.edugoolda.api.user.configureUserRouting
 import org.koin.core.Koin
 
@@ -17,6 +18,7 @@ fun Application.configureRouting(koin: Koin) {
             configureUserRouting(koin)
             configureBackupRouting(koin)
             configureGroupRouting(koin)
+            configureLessonsRouting(koin)
         }
         get("/hello") {
             call.respondText("Hello, Ktor! It is 7 version")

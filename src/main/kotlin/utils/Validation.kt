@@ -1,6 +1,6 @@
 package itmo.edugoolda.utils
 
-import itmo.edugoolda.api.group.utils.maxLength
+import itmo.edugoolda.api.group.utils.maxLengthNullable
 import itmo.edugoolda.api.user.storage.tables.UserTable
 
 private const val EMAIL_REGEX = "[a-z0-9.!#$%&'`*+\\-/=^_{}|~]+@((\\.)?[a-zA-Z0-9\\-])+$"
@@ -26,7 +26,7 @@ fun validateBio(bio: String?) = bio == null || bio.length < 5000
 fun validateName(name: String): Boolean {
     if (name.isBlank()) return false
 
-    if (name.length > UserTable.name.maxLength) return false
+    if (name.length > UserTable.name.maxLengthNullable) return false
 
     return true
 }

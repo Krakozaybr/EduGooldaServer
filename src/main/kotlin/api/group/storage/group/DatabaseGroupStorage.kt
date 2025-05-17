@@ -171,9 +171,7 @@ class DatabaseGroupStorage : GroupStorage {
                     )
                 }
         ).map {
-            GroupEntity.wrapRow(it).toGroupInfoDomain(
-                it.getOrNull(UserFavouriteGroupTable.isFavourite) ?: false
-            )
+            GroupEntity.wrapRow(it).toGroupInfoDomain()
         }
     }
 
@@ -239,10 +237,15 @@ class DatabaseGroupStorage : GroupStorage {
                     )
                 }
         ).map {
-            GroupEntity.wrapRow(it).toGroupInfoDomain(
-                it.getOrNull(UserFavouriteGroupTable.isFavourite) ?: false
-            )
+            GroupEntity.wrapRow(it).toGroupInfoDomain()
         }
+    }
+
+    override suspend fun getGroupEntities(
+        ids: List<EntityIdentifier>
+    ): List<GroupEntityDomain> = transaction {
+        GroupEntity.find { GroupTable.id inList ids.map { it.value } }
+            .map { it.toGroupEntityDomain() }
     }
 
     override suspend fun getGroupDetails(

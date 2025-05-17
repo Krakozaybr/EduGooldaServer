@@ -2,10 +2,7 @@ package itmo.edugoolda.api.group.storage.entities
 
 import itmo.edugoolda.api.group.domain.model.GroupEntityDomain
 import itmo.edugoolda.api.group.domain.model.GroupInfoDomain
-import itmo.edugoolda.api.group.storage.tables.BannedUsersTable
-import itmo.edugoolda.api.group.storage.tables.GroupTable
-import itmo.edugoolda.api.group.storage.tables.GroupToUserTable
-import itmo.edugoolda.api.group.storage.tables.JoinRequestTable
+import itmo.edugoolda.api.group.storage.tables.*
 import itmo.edugoolda.api.user.storage.entities.UserEntity
 import itmo.edugoolda.utils.EntityIdentifier
 import itmo.edugoolda.utils.database.BaseEntity
@@ -22,6 +19,10 @@ class GroupEntity(id: EntityID<UUID>) : BaseEntity(id, GroupTable) {
     var ownerId by GroupTable.ownerId
     var subjectId by GroupTable.subjectId
     var isActive by GroupTable.isActive
+
+    // Computed fields
+    val isFavourite: Boolean
+        get() = readValues.getOrNull(UserFavouriteGroupTable.isFavourite) == true
 
     // Linked fields
     var owner by UserEntity referencedOn GroupTable.ownerId
@@ -42,7 +43,7 @@ fun GroupEntity.toGroupEntityDomain() = GroupEntityDomain(
     createdAt = createdAt,
 )
 
-fun GroupEntity.toGroupInfoDomain(isFavourite: Boolean) = GroupInfoDomain(
+fun GroupEntity.toGroupInfoDomain() = GroupInfoDomain(
     id = EntityIdentifier.parse(id.value),
     name = name,
     ownerName = owner.name,
