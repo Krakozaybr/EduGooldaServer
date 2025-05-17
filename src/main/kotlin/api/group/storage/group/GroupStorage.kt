@@ -84,4 +84,8 @@ interface GroupStorage {
         groupId: EntityIdentifier,
         isFavourite: Boolean
     )
+
+    suspend fun getGroupEntities(
+        ids: List<EntityIdentifier>
+    ): List<GroupEntityDomain>
 }

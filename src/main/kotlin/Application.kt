@@ -5,6 +5,7 @@ import io.ktor.server.netty.*
 import itmo.edugoolda.api.auth.authModule
 import itmo.edugoolda.api.error.errorModule
 import itmo.edugoolda.api.group.groupModule
+import itmo.edugoolda.api.lessons.lessonsModule
 import itmo.edugoolda.api.user.userModule
 import itmo.edugoolda.plugins.*
 import org.koin.core.context.startKoin
@@ -19,7 +20,8 @@ val mainModule = module {
         authModule,
         userModule,
         errorModule,
-        groupModule
+        groupModule,
+        lessonsModule
     )
 }
 
