@@ -91,7 +91,8 @@ class DatabaseGroupRequestStorage : GroupRequestStorage {
                     JoinRequestTable,
                     JoinType.INNER,
                     onColumn = GroupTable.id,
-                    otherColumn = JoinRequestTable.groupId
+                    otherColumn = JoinRequestTable.groupId,
+                    additionalConstraint = { JoinRequestTable.status eq JoinRequestStatus.Pending }
                 )
                 .select(JoinRequestTable.columns + UserTable.columns)
         ).map { JoinRequestEntity.wrapRow(it).toDomain() }

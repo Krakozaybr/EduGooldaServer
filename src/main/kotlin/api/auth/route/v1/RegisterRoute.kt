@@ -61,7 +61,8 @@ fun Route.registerRoute(koin: Koin) {
             AuthResponse(
                 accessToken = tokens.accessToken,
                 refreshToken = tokens.refreshToken,
-                userId = userId.stringValue
+                userId = userId.stringValue,
+                role = it.role
             )
         )
     }
