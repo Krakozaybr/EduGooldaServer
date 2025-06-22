@@ -2,6 +2,8 @@ package module.lessons
 
 import io.ktor.client.call.*
 import io.ktor.http.*
+import itmo.edugoolda.api.lessons.dto.LessonFullDetailsDTO
+import itmo.edugoolda.api.lessons.route.v1.CreateLessonRequest
 import itmo.edugoolda.api.lessons.route.v1.LessonsListResponse
 import module.*
 import module.group.GroupUtils
@@ -55,6 +57,56 @@ class LessonListTests : ModuleTest {
 
         assertEquals(
             setOf(lessonId.toString(), lessonId2.toString()),
+            body.items.map { it.id }.toSet()
+        )
+    }
+
+    @Test
+    fun test_lesson_list_and_create_for_student() = testJsonRequests { client ->
+        val teacher = client.registerUniqueTeacher()
+        val student = client.registerUniqueStudent()
+
+        val subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
+        val groupId1 = GroupUtils.createGroupInDatabase(
+            subjectId = subjectId,
+            ownerId = teacher.userId
+        )
+
+        GroupUtils.addStudentToGroup(
+            studentId = student.userId,
+            groupId = groupId1.toString()
+        )
+
+        val lessonDto = client.sendRequest(
+            url = "/api/v1/lesson",
+            method = HttpMethod.Post,
+            accessToken = teacher.accessToken,
+            body = CreateLessonRequest(
+                name = "Lesson",
+                description = null,
+                groupIds = listOf(groupId1.toString()),
+                isEstimatable = false,
+            )
+        ).expectOk().body<LessonFullDetailsDTO>()
+
+        val body = client.sendRequest(
+            url = "/api/v1/lessons?page=1&page_size=10",
+            method = HttpMethod.Get,
+            accessToken = student.accessToken
+        ).expectOk().body<LessonsListResponse>()
+
+        assertEquals(
+            1,
+            body.total
+        )
+
+        assertEquals(
+            1,
+            body.items.size
+        )
+
+        assertEquals(
+            setOf(lessonDto.id),
             body.items.map { it.id }.toSet()
         )
     }

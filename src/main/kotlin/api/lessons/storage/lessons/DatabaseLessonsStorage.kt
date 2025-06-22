@@ -18,11 +18,8 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.with
-import org.jetbrains.exposed.sql.JoinType
-import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
-import org.jetbrains.exposed.sql.compoundAnd
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class DatabaseLessonsStorage : LessonsStorage {
@@ -182,7 +179,7 @@ class DatabaseLessonsStorage : LessonsStorage {
                 .select(UserTable.columns + LessonTable.columns)
                 .where {
                     buildList {
-                        add(LessonTable.opensAt lessEq now)
+                        add((LessonTable.opensAt eq null) or (LessonTable.opensAt lessEq now))
 
                         if (groupId != null) {
                             add(GroupToLessonTable.groupId eq groupId.value)
