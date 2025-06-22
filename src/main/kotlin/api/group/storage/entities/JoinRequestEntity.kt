@@ -8,6 +8,8 @@ import itmo.edugoolda.api.user.storage.entities.toDomain
 import itmo.edugoolda.utils.EntityIdentifier
 import itmo.edugoolda.utils.database.BaseEntity
 import itmo.edugoolda.utils.database.BaseEntityClass
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import org.jetbrains.exposed.dao.id.EntityID
 import java.util.*
 
@@ -24,7 +26,9 @@ class JoinRequestEntity(id: EntityID<UUID>) : BaseEntity(id, JoinRequestTable) {
 
 fun JoinRequestEntity.toDomain() = JoinRequestDomain(
     id = EntityIdentifier.parse(id.value),
-    sender = user.toDomain()
+    sender = user.toDomain(),
+    groupId = EntityIdentifier.parse(groupId.value),
+    createdAt = createdAt.toInstant(TimeZone.UTC)
 )
 
 fun JoinRequestEntity.toJoinRequestInfoDomain() = JoinRequestInfoDomain(

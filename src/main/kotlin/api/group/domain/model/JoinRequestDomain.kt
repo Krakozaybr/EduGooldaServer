@@ -2,6 +2,7 @@ package itmo.edugoolda.api.group.domain.model
 
 import itmo.edugoolda.api.user.domain.UserInfoDomain
 import itmo.edugoolda.utils.EntityIdentifier
+import kotlinx.datetime.Instant
 
 enum class JoinRequestStatus {
     Pending,
@@ -12,7 +13,9 @@ enum class JoinRequestStatus {
 
 data class JoinRequestDomain(
     val id: EntityIdentifier,
-    val sender: UserInfoDomain
+    val sender: UserInfoDomain,
+    val groupId: EntityIdentifier,
+    val createdAt: Instant
 )
 
 data class JoinRequestInfoDomain(
