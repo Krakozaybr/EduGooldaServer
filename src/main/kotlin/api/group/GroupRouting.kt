@@ -36,7 +36,7 @@ fun Route.configureGroupRouting(koin: Koin) {
         joinGroupByCodeRoute(koin)
         joinGroupByLinkRoute(koin)
         groupJoinRequestsRoute(koin)
-        teacherJoinRequestsRoute(koin)
+        joinRequestsRoute(koin)
         joinRequestActionRoute(koin)
         bannedUsersRoute(koin)
         unbanUserRoute(koin)

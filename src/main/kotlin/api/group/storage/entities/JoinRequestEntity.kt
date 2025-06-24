@@ -27,7 +27,7 @@ class JoinRequestEntity(id: EntityID<UUID>) : BaseEntity(id, JoinRequestTable) {
 fun JoinRequestEntity.toDomain() = JoinRequestDomain(
     id = EntityIdentifier.parse(id.value),
     sender = user.toDomain(),
-    groupId = EntityIdentifier.parse(groupId.value),
+    group = group.toGroupInfoDomain(),
     createdAt = createdAt.toInstant(TimeZone.UTC)
 )
 

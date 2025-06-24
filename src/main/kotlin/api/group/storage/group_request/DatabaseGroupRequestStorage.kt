@@ -22,6 +22,7 @@ import org.jetbrains.exposed.dao.with
 import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.compoundAnd
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.time.Duration.Companion.days
 
@@ -95,6 +96,25 @@ class DatabaseGroupRequestStorage : GroupRequestStorage {
                     additionalConstraint = { JoinRequestTable.status eq JoinRequestStatus.Pending }
                 )
                 .select(JoinRequestTable.columns + UserTable.columns)
+        ).map { JoinRequestEntity.wrapRow(it).toDomain() }
+    }
+
+    override suspend fun getStudentJoinRequests(
+        userId: EntityIdentifier,
+        skip: Int,
+        limit: Int
+    ): Paged<JoinRequestDomain> = transaction {
+        Paged.of(
+            skip = skip,
+            count = limit,
+            iterable = JoinRequestTable
+                .selectAll()
+                .where {
+                    listOf(
+                        JoinRequestTable.userId eq userId.value,
+                        JoinRequestTable.status eq JoinRequestStatus.Pending
+                    ).compoundAnd()
+                }
         ).map { JoinRequestEntity.wrapRow(it).toDomain() }
     }
 

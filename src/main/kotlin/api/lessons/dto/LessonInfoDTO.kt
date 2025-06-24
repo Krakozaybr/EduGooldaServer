@@ -12,7 +12,7 @@ data class LessonInfoDTO(
     @SerialName("name") val name: String,
     @SerialName("description") val description: String?,
     @SerialName("teacher") val teacher: UserInfoDto,
-    @SerialName("createdAt") val createdAt: String
+    @SerialName("created_at") val createdAt: String
 )
 
 fun LessonInfoDomain.toDto() = LessonInfoDTO(

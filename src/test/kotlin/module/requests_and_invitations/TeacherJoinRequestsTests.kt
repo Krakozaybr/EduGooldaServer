@@ -4,7 +4,6 @@ import io.ktor.client.call.*
 import io.ktor.http.*
 import itmo.edugoolda.api.group.domain.model.JoinRequestStatus
 import itmo.edugoolda.api.group.route.v1.requests_and_invitations.JoinRequestsResponse
-import itmo.edugoolda.api.user.exceptions.UnsuitableUserRoleException
 import module.*
 import module.group.GroupUtils
 import module.subject.SubjectUtils
@@ -163,33 +162,5 @@ class TeacherJoinRequestsTests : ModuleTest {
             requests.map { it.toString() }.toSet(),
             (body1.items + body2.items).map { it.id }.toSet()
         )
-    }
-
-    @Test
-    fun test_group_join_requests_not_owner() = testJsonRequests { client ->
-        val teacher = client.registerTeacher()
-        val student = client.registerStudent()
-
-        val requests = List(10) {
-            val groupId = GroupUtils.createGroupInDatabase(
-                ownerId = teacher.userId,
-                subjectId = SubjectUtils.createSubjectInDatabase(teacher.userId).toString()
-            )
-
-            JoiningUtils.addJoinRequestStudent(
-                groupId = groupId.toString(),
-                studentId = client.registerStudent(
-                    DefaultRegisterStudentRequest.copy(
-                        email = "student$it@email.com"
-                    )
-                ).userId
-            )
-        }
-
-        client.sendRequest(
-            url = "/api/v1/join_requests?page=1&page_size=10",
-            method = HttpMethod.Get,
-            accessToken = student.accessToken
-        ).expectError(HttpStatusCode.Forbidden, UnsuitableUserRoleException.CODE)
     }
 }

@@ -8,10 +8,8 @@ import itmo.edugoolda.api.lessons.storage.tables.SolutionsTable
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import module.faker
-import org.jetbrains.exposed.sql.compoundAnd
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.insertAndGetId
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 import kotlin.time.Duration.Companion.days
@@ -65,6 +63,12 @@ object LessonsUtils {
             it[SolutionsTable.teacherId] = UUID.fromString(teacherId)
             it[SolutionsTable.status] = status
         }
+    }
+
+    fun deleteLesson(
+        lessonId: String
+    ) = transaction {
+        LessonTable.deleteWhere { LessonTable.id eq UUID.fromString(lessonId) }
     }
 
     fun createMessage(

@@ -29,9 +29,10 @@ class GroupDeleteTests : ModuleTest {
     @Test
     fun test_group_delete_not_owner() = testJsonRequests { client ->
         val tokens = client.registerTeacher()
+        val owner = client.registerUniqueStudent()
 
         val id = GroupUtils.createGroupInDatabase(
-            ownerId = UUID.randomUUID().toString(),
+            ownerId = owner.userId,
             subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId).toString()
         )
 

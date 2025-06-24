@@ -14,5 +14,5 @@ fun checkGroupName(name: String): Boolean {
 
 fun checkGroupDescription(description: String): Boolean {
     return description.isNotBlank()
-            && description.length in 0..GroupTable.name.maxLengthNullable
+            && description.length in 0..GroupTable.description.maxLength
 }

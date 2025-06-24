@@ -33,4 +33,10 @@ interface GroupRequestStorage {
         skip: Int,
         limit: Int
     ): Paged<JoinRequestDomain>
+
+    suspend fun getStudentJoinRequests(
+        userId: EntityIdentifier,
+        skip: Int,
+        limit: Int
+    ): Paged<JoinRequestDomain>
 }

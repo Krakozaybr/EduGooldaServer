@@ -30,7 +30,10 @@ fun initDatabase(
 
     val database = Database.connect(
         url = url,
-        driver = driver
+        driver = driver,
+        setupConnection = {
+            it.createStatement().executeUpdate("PRAGMA foreign_keys = ON")
+        }
     )
 
     transaction(database) {

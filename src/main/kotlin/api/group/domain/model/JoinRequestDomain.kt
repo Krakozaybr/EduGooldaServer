@@ -14,7 +14,7 @@ enum class JoinRequestStatus {
 data class JoinRequestDomain(
     val id: EntityIdentifier,
     val sender: UserInfoDomain,
-    val groupId: EntityIdentifier,
+    val group: GroupInfoDomain,
     val createdAt: Instant
 )
 
