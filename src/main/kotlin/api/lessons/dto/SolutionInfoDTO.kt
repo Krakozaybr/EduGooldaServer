@@ -12,6 +12,7 @@ data class SolutionInfoDTO(
     @SerialName("sent_at") val sentAt: Instant,
     @SerialName("student") val student: UserInfoDto,
     @SerialName("status") val status: String,
+    @SerialName("lesson_info") val lessonInfo: LessonInfoDTO
 )
 
 fun SolutionInfoDomain.toDto() = SolutionInfoDTO(
@@ -19,4 +20,5 @@ fun SolutionInfoDomain.toDto() = SolutionInfoDTO(
     sentAt = sentAt,
     student = UserInfoDto.from(student),
     status = status.string,
+    lessonInfo = lesson.toDto()
 )

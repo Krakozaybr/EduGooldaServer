@@ -142,7 +142,7 @@ class GroupCreateTests : ModuleTest {
             accessToken = tokens.accessToken,
             body = GroupCreateRequest(
                 name = "Test group",
-                subjectId = UUID.randomUUID().toString(),
+                subjectId = SubjectUtils.createSubjectInDatabase(tokens.userId).toString(),
                 description = "zdf".repeat(300)
             )
         ).expectError(HttpStatusCode.BadRequest, GroupDescriptionException.CODE)

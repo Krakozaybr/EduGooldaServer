@@ -344,6 +344,7 @@ class DatabaseLessonsStorage : LessonsStorage {
                     )
                 }
                 .selectAll()
+                .orderBy(SolutionsTable.createdAt to SortOrder.DESC)
                 .run {
                     status ?: return@run this
 

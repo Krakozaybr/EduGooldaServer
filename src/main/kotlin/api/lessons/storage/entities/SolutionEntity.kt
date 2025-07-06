@@ -52,6 +52,7 @@ fun SolutionEntity.toSolutionInfoDomain() = SolutionInfoDomain(
     sentAt = createdAt.toInstant(TimeZone.UTC),
     student = user.toDomain(),
     status = status,
+    lesson = lesson.toLessonInfoDomain()
 )
 
 fun SolutionEntity.toLessonStudentDetailsDomain() = LessonStudentDetailsDomain(

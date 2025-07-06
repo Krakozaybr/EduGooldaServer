@@ -25,7 +25,7 @@ fun Route.registerRoute(koin: Koin) {
     val userStorage = koin.get<UserStorage>()
     val generateTokensUseCase = koin.get<GetTokensUseCase>()
 
-    post<RegisterRequest>("register") {
+    post<RegisterRequest>("/register") {
         val role = UserRole.fromString(it.role) ?: throw UnknownUserRoleException(it.role)
 
         if (!validateEmail(it.email)) throw InvalidEmailException()

@@ -11,7 +11,7 @@ import org.koin.core.Koin
 fun Route.logoutRoute(koin: Koin) {
     val refreshTokensStorage = koin.get<RefreshTokensStorage>()
 
-    route("logout") {
+    route("/logout") {
         post<LogoutRequest> {
             val wasDeleted = refreshTokensStorage.removeToken(it.refreshToken) >= 1
 

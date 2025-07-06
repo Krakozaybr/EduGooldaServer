@@ -9,4 +9,5 @@ data class SolutionInfoDomain(
     val sentAt: Instant,
     val student: UserInfoDomain,
     val status: SolutionStatus,
+    val lesson: LessonInfoDomain
 )

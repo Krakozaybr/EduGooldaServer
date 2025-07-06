@@ -18,7 +18,7 @@ fun Route.loginRoute(koin: Koin) {
     val userStorage = koin.get<UserStorage>()
     val generateTokensUseCase = koin.get<GetTokensUseCase>()
 
-    route("login") {
+    route("/login") {
         post<LoginRequest> {
             val userId = authStorage.checkCredentials(
                 AuthCredentials.EmailPassword(

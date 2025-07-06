@@ -11,7 +11,7 @@ import org.koin.core.Koin
 fun Route.refreshRoute(koin: Koin) {
     val generateTokensUseCase = koin.get<GetTokensUseCase>()
 
-    route("refresh") {
+    route("/refresh") {
         post<RefreshRequest> {
             val tokens = generateTokensUseCase.refreshTokens(it.refreshToken)
 
