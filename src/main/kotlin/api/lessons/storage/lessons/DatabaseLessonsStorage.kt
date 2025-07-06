@@ -322,17 +322,6 @@ class DatabaseLessonsStorage : LessonsStorage {
             count = maxCount,
             iterable = SolutionsTable
                 .run {
-                    lessonId ?: return@run this
-
-                    join(
-                        LessonTable,
-                        JoinType.INNER,
-                        onColumn = SolutionsTable.lessonId,
-                        otherColumn = LessonTable.id,
-                        additionalConstraint = { LessonTable.authorId eq teacherId.value }
-                    )
-                }
-                .run {
                     groupId ?: return@run this
 
                     join(
@@ -343,8 +332,22 @@ class DatabaseLessonsStorage : LessonsStorage {
                         additionalConstraint = { GroupToLessonTable.groupId eq groupId.value }
                     )
                 }
+                .join(
+                    LessonTable,
+                    JoinType.INNER,
+                    onColumn = SolutionsTable.lessonId,
+                    otherColumn = LessonTable.id,
+                    additionalConstraint = { LessonTable.authorId eq teacherId.value }
+                )
                 .selectAll()
                 .orderBy(SolutionsTable.createdAt to SortOrder.DESC)
+                .run {
+                    lessonId ?: return@run this
+
+                    where {
+                        SolutionsTable.lessonId eq lessonId.value
+                    }
+                }
                 .run {
                     status ?: return@run this
 
